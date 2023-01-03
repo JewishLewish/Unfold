@@ -24,9 +24,24 @@ func main() {
 	fmt.Print("Image has been created! \n")
 	draw.Draw(cimg, img.Bounds(), img, image.Point{}, draw.Over)
 	var user, action string
+	var locX, locY, locX2, locY2 int
+	var r, g, b uint8
+
 	for true {
 		fmt.Print("$terminal =>")
-		fmt.Scan(&user, &action) //Admin Rectangle x y x2 y2
+		fmt.Scan(&user) //Admin or User
+		if user == "user" {
+			fmt.Print("Place pixel - X Y R G B ->")
+			fmt.Scan(&locX, &locY, &r, &g, &b)
+			pixelplace(locX, locY, r, g, b)
+		} else if user == "admin" {
+			fmt.Print("$action =>") //rectangle
+			fmt.Scan(&action)
+			if action == "rectangle" {
+				fmt.Print("Rectangle - X Y X2 Y2 R G B")
+				fmt.Scan(&locX, &locY, &locX2, &locY2, &r, &g, &b)
+			}
+		}
 	}
 }
 
