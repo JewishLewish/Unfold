@@ -12,22 +12,7 @@ import (
 	"strconv"
 )
 
-func unfold(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "image/png")
-	w.Header().Set("Cache-Control", "no-cache")
-	w.Header().Set("Connection", "upgrade")
-	w.Header().Set("Upgrade", "websocket")
-
-	png.Encode(w, sitecanvas())
-
-	if f, ok := w.(http.Flusher); ok {
-		f.Flush()
-	}
-}
-
 func web() {
-	http.HandleFunc("/", unfold)
-
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == http.MethodPost {
@@ -51,8 +36,8 @@ func web() {
 			fmt.Print(inputs)
 
 		} else {
-			// handle other request methods
-			fmt.Fprintf(w, "We did not expect this.")
+			//If the user is NOT POST-ing then they will just see the picture of the canvas.
+			png.Encode(w, sitecanvas())
 		}
 	})
 
