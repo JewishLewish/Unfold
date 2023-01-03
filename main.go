@@ -40,7 +40,9 @@ func main() {
 			fmt.Scan(&action)
 			if action == "rectangle" {
 				fmt.Print("Rectangle - X Y X2 Y2 R G B")
-				fmt.Scan(&locX, &locY, &locX2, &locY2, &r, &g, &b)
+				fmt.Scan(&locX, &locY, &locX2, &locY2)
+				rectangle(locX, locY, locX2, locY2)
+
 			} else if action == "backup" { //Backs Up The canvas
 				backup()
 			} else {
@@ -48,7 +50,7 @@ func main() {
 				continue
 			}
 		} else {
-			fmt.Print("Inappropriate Response \n")
+			fmt.Print("Inappropriate Response => Accepting only 'user' or 'admin' \n")
 			continue
 		}
 	}
@@ -107,6 +109,16 @@ func pixelplace(locX int, locY int, R, G, B uint8) {
 	}
 	cimg.Set(locX, locY, color.RGBA{uint8(R), uint8(G), uint8(B), 255})
 	update(cimg)
+	return
+}
+
+// Admin Pixel Placing
+func rectangle(lX, lY, lX2, lY2 int) {
+	fmt.Print("Drawing White Recetangle... \n")
+	rect := image.Rect(lX, lY, lX2, lY2)
+	draw.Draw(cimg, rect, &image.Uniform{color.White}, image.Point{lX, lX2}, draw.Over)
+	update(cimg)
+	fmt.Print("Rectangle completed! \n")
 	return
 }
 
