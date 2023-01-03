@@ -41,6 +41,8 @@ func main() {
 			if action == "rectangle" {
 				fmt.Print("Rectangle - X Y X2 Y2 R G B")
 				fmt.Scan(&locX, &locY, &locX2, &locY2, &r, &g, &b)
+			} else if action == "backup" { //Backs Up The canvas
+				backup()
 			}
 		} else {
 			fmt.Print("Inappropriate Response \n")
@@ -136,4 +138,22 @@ func sitecanvas() image.Image {
 	img, _ := png.Decode(canvas)
 	canvas.Close()
 	return img
+}
+
+func backup() {
+	fmt.Print("Backing up main.png...\n")
+	canvas, _ := os.Open("canvas.png") //canvas = Main folder
+	img, _ := png.Decode(canvas)
+	canvas.Close()
+
+	art, _ := os.Open("main.png")
+	artedits, _ := png.Decode(art)
+	art.Close()
+
+	outFile, _ := os.Create("backup.png")
+
+	png.Encode(outFile, artedits)
+	png.Encode(outFile, img)
+	outFile.Close()
+	fmt.Print("Backup is complete. backup.png is made!\n")
 }
