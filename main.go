@@ -35,6 +35,7 @@ func main() {
 			fmt.Print("Place pixel - X Y R G B ->")
 			fmt.Scan(&locX, &locY, &r, &g, &b)
 			pixelplace(locX, locY, r, g, b)
+			fmt.Print("Pixel has been placed!")
 		} else if user == "admin" {
 			fmt.Print("$action =>") //rectangle
 			fmt.Scan(&action)
