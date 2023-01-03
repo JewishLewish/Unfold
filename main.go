@@ -150,10 +150,14 @@ func backup() {
 	artedits, _ := png.Decode(art)
 	art.Close()
 
-	outFile, _ := os.Create("backup.png")
+	//Create Image to merge.
+	bounds := img.Bounds()
+	newImg := image.NewRGBA(bounds)
+	draw.Draw(newImg, bounds, img, image.Point{0, 0}, draw.Over)
+	draw.Draw(newImg, bounds, artedits, image.Point{0, 0}, draw.Over)
 
-	png.Encode(outFile, artedits)
-	png.Encode(outFile, img)
+	outFile, _ := os.Create("backup.png")
+	png.Encode(outFile, newImg)
 	outFile.Close()
 	fmt.Print("Backup is complete. backup.png is made!\n")
 }
