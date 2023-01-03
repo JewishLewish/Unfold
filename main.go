@@ -33,16 +33,21 @@ func canvas() image.Image {
 	canvas, _ := os.Open("canvas.png") //canvas = Main folder.
 	img, _ := png.Decode(canvas)
 	canvas.Close()
+
+	outFile, _ := os.Create("main.png")
+	png.Encode(outFile, img)
+	outFile.Close()
+
 	return img
 }
 
 func update(cimg *image.RGBA) {
-	e := os.Remove("canvas.png")
+	e := os.Remove("main.png")
 	if e != nil {
 		log.Fatal(e)
 	}
 
-	outFile, _ := os.Create("canvas.png")
+	outFile, _ := os.Create("main.png")
 	png.Encode(outFile, cimg)
 	outFile.Close()
 }
