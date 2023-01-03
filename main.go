@@ -12,6 +12,19 @@ import (
 	"strconv"
 )
 
+var img = canvas()
+var cimg = image.NewRGBA(img.Bounds())
+
+func main() {
+	go web() //Website operates async.
+	fmt.Print("Website is up. \n")
+
+	cimg := image.NewRGBA(img.Bounds())
+	fmt.Print("Image has been created! \n")
+	draw.Draw(cimg, img.Bounds(), img, image.Point{}, draw.Over)
+}
+
+// Website
 func web() {
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
@@ -54,31 +67,22 @@ func web() {
 	log.Fatal(http.ListenAndServe(":8080", mux))
 }
 
-func main() {
-	var locX, locY, R, G, B int
-	go web() //Website operates async.
-	fmt.Print("Website is up. \n")
-
-	img := canvas() //Fetchs canvas
-	cimg := image.NewRGBA(img.Bounds())
-	fmt.Print("Image has been created! \n")
+// Pixel Placing Mechanism
+func pixelplace(locX int, locY int, R, G, B uint8) {
 	draw.Draw(cimg, img.Bounds(), img, image.Point{}, draw.Over)
 
-	for true {
-		fmt.Print("Type the following: locX, locY, R, G, B:")
-		fmt.Scan(&locX, &locY, &R, &G, &B)
-		if R > 255 || G > 255 || B > 255 {
-			fmt.Print("ERROR! RGB max int goes up to 255.")
-			continue
-		}
-		cimg.Set(locX, locY, color.RGBA{uint8(R), uint8(G), uint8(B), 255})
-		update(cimg)
-	} //This will constantly operate until the server is down
+	fmt.Print("Type the following: locX, locY, R, G, B:")
+	fmt.Scan(&locX, &locY, &R, &G, &B)
+	if R > 255 || G > 255 || B > 255 {
+		fmt.Print("ERROR! RGB max int goes up to 255.")
+		return
+	}
+	cimg.Set(locX, locY, color.RGBA{uint8(R), uint8(G), uint8(B), 255})
+	update(cimg)
+	return
 }
 
-func pixelplace(locX int, locY int, R, G, B uint8) {
-}
-
+// Canvas Manipulation and Data Fetching
 func canvas() image.Image {
 	canvas, _ := os.Open("canvas.png") //canvas = Main folder.
 	img, _ := png.Decode(canvas)
