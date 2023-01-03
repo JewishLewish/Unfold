@@ -12,7 +12,16 @@ import (
 )
 
 func unfold(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Home Page")
+	w.Header().Set("Content-Type", "image/png")
+	w.Header().Set("Cache-Control", "no-cache")
+	w.Header().Set("Connection", "upgrade")
+	w.Header().Set("Upgrade", "websocket")
+
+	png.Encode(w, sitecanvas())
+
+	if f, ok := w.(http.Flusher); ok {
+		f.Flush()
+	}
 }
 
 func web() {
@@ -65,4 +74,11 @@ func update(cimg *image.RGBA) {
 	outFile, _ := os.Create("main.png")
 	png.Encode(outFile, cimg)
 	outFile.Close()
+}
+
+func sitecanvas() image.Image {
+	canvas, _ := os.Open("main.png") //canvas = Main folder.
+	img, _ := png.Decode(canvas)
+	canvas.Close()
+	return img
 }
