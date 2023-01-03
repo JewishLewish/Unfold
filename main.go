@@ -9,6 +9,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strconv"
 )
 
 func unfold(w http.ResponseWriter, r *http.Request) {
@@ -26,10 +27,39 @@ func unfold(w http.ResponseWriter, r *http.Request) {
 
 func web() {
 	http.HandleFunc("/", unfold)
-	log.Fatal(http.ListenAndServe(":8080", nil))
+
+	mux := http.NewServeMux()
+	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		if r.Method == http.MethodPost {
+			err := r.ParseForm()
+			if err != nil {
+				http.Error(w, "Error parsing form data", http.StatusBadRequest)
+				return
+			}
+			fmt.Print(r.Form)
+
+			var inputs [5]int
+			for i := 0; i < 5; i++ {
+				inputStr := r.Form.Get(fmt.Sprintf("input%d", i))
+				input, err := strconv.Atoi(inputStr)
+				if err != nil {
+					http.Error(w, "Error parsing int inputs", http.StatusBadRequest)
+					return
+				}
+				inputs[i] = input
+			}
+
+		} else {
+			// handle other request methods
+			fmt.Fprintf(w, "We did not expect this.")
+		}
+	})
+
+	log.Fatal(http.ListenAndServe(":8080", mux))
 }
 
 func main() {
+	var locX, locY, R, G, B int
 	go web() //Website operates async.
 	fmt.Print("Website is up. \n")
 
@@ -37,7 +67,6 @@ func main() {
 	cimg := image.NewRGBA(img.Bounds())
 	fmt.Print("Image has been created! \n")
 
-	var locX, locY, R, G, B int
 	draw.Draw(cimg, img.Bounds(), img, image.Point{}, draw.Over)
 
 	for true {
