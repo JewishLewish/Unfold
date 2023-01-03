@@ -36,7 +36,6 @@ func web() {
 				http.Error(w, "Error parsing form data", http.StatusBadRequest)
 				return
 			}
-			fmt.Print(r.Form)
 
 			var inputs [5]int
 			for i := 0; i < 5; i++ {
@@ -48,6 +47,8 @@ func web() {
 				}
 				inputs[i] = input
 			}
+
+			fmt.Print(inputs)
 
 		} else {
 			// handle other request methods
