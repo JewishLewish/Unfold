@@ -30,15 +30,16 @@ func web() {
 }
 
 func main() {
-	go web()
-	fmt.Print("Website is up.")
+	go web() //Website operates async.
+	fmt.Print("Website is up. \n")
 
 	img := canvas() //Fetchs canvas
 	cimg := image.NewRGBA(img.Bounds())
-	fmt.Print("Image has been founded! \n")
+	fmt.Print("Image has been created! \n")
 
 	var locX, locY, R, G, B int
 	draw.Draw(cimg, img.Bounds(), img, image.Point{}, draw.Over)
+
 	for true {
 		fmt.Print("Type the following: locX, locY, R, G, B:")
 		fmt.Scan(&locX, &locY, &R, &G, &B)
@@ -48,9 +49,7 @@ func main() {
 		}
 		cimg.Set(locX, locY, color.RGBA{uint8(R), uint8(G), uint8(B), 255})
 		update(cimg)
-	}
-	update(cimg)
-	//close
+	} //This will constantly operate until the server is down
 }
 
 func canvas() image.Image {
