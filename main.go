@@ -36,8 +36,18 @@ func web() {
 			fmt.Print(inputs)
 
 		} else {
+			w.Header().Set("Content-Type", "image/png")
+			w.Header().Set("Cache-Control", "no-cache")
+			w.Header().Set("Connection", "upgrade")
+			w.Header().Set("Upgrade", "websocket")
+
 			//If the user is NOT POST-ing then they will just see the picture of the canvas.
 			png.Encode(w, sitecanvas())
+
+			if f, ok := w.(http.Flusher); ok {
+				f.Flush()
+			}
+
 		}
 	})
 
@@ -52,7 +62,6 @@ func main() {
 	img := canvas() //Fetchs canvas
 	cimg := image.NewRGBA(img.Bounds())
 	fmt.Print("Image has been created! \n")
-
 	draw.Draw(cimg, img.Bounds(), img, image.Point{}, draw.Over)
 
 	for true {
@@ -65,6 +74,9 @@ func main() {
 		cimg.Set(locX, locY, color.RGBA{uint8(R), uint8(G), uint8(B), 255})
 		update(cimg)
 	} //This will constantly operate until the server is down
+}
+
+func pixelplace(locX int, locY int, R, G, B uint8) {
 }
 
 func canvas() image.Image {
