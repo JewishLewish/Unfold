@@ -22,6 +22,11 @@ func main() {
 	cimg := image.NewRGBA(img.Bounds())
 	fmt.Print("Image has been created! \n")
 	draw.Draw(cimg, img.Bounds(), img, image.Point{}, draw.Over)
+	var input string
+	for true {
+		fmt.Print("$ ->")
+		fmt.Scan(&input)
+	}
 }
 
 // Website
@@ -71,8 +76,6 @@ func web() {
 func pixelplace(locX int, locY int, R, G, B uint8) {
 	draw.Draw(cimg, img.Bounds(), img, image.Point{}, draw.Over)
 
-	fmt.Print("Type the following: locX, locY, R, G, B:")
-	fmt.Scan(&locX, &locY, &R, &G, &B)
 	if R > 255 || G > 255 || B > 255 {
 		fmt.Print("ERROR! RGB max int goes up to 255.")
 		return
