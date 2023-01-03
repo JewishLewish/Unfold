@@ -17,12 +17,14 @@ var img = canvas()
 var cimg = image.NewRGBA(img.Bounds())
 
 func main() {
+
 	go web() //Website operates async.
 	fmt.Print("Website is up. \n")
 
 	cimg := image.NewRGBA(img.Bounds())
 	fmt.Print("Image has been created! \n")
 	draw.Draw(cimg, img.Bounds(), img, image.Point{}, draw.Over)
+
 	var user, action string
 	var locX, locY, locX2, locY2 int
 	var r, g, b uint8
@@ -91,7 +93,6 @@ func web() {
 
 // Pixel Placing Mechanism
 func pixelplace(locX int, locY int, R, G, B uint8) {
-	draw.Draw(cimg, img.Bounds(), img, image.Point{}, draw.Over)
 
 	if R > 255 || G > 255 || B > 255 {
 		fmt.Print("ERROR! RGB max int goes up to 255.")
@@ -116,6 +117,7 @@ func canvas() image.Image {
 }
 
 func update(upimg *image.RGBA) {
+
 	e := os.Remove("main.png")
 	if e != nil {
 		log.Fatal(e)
@@ -124,6 +126,7 @@ func update(upimg *image.RGBA) {
 	outFile, _ := os.Create("main.png")
 	png.Encode(outFile, upimg)
 	outFile.Close()
+	return
 }
 
 func sitecanvas() image.Image {
