@@ -7,12 +7,27 @@ import (
 	"image/draw"
 	"image/png"
 	"log"
+	"net/http"
 	"os"
 )
 
+func unfold(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, "Home Page")
+}
+
+func web() {
+	http.HandleFunc("/", unfold)
+	log.Fatal(http.ListenAndServe(":8080", nil))
+}
+
 func main() {
+	go web()
+	fmt.Print("Website is up.")
+
 	img := canvas() //Fetchs canvas
 	cimg := image.NewRGBA(img.Bounds())
+	fmt.Print("Image has been founded! \n")
+
 	var locX, locY, R, G, B int
 	draw.Draw(cimg, img.Bounds(), img, image.Point{}, draw.Over)
 	for true {
