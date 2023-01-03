@@ -22,10 +22,10 @@ func main() {
 	cimg := image.NewRGBA(img.Bounds())
 	fmt.Print("Image has been created! \n")
 	draw.Draw(cimg, img.Bounds(), img, image.Point{}, draw.Over)
-	var input string
+	var user, action string
 	for true {
-		fmt.Print("$ ->")
-		fmt.Scan(&input)
+		fmt.Print("$terminal =>")
+		fmt.Scan(&user, &action) //Admin Rectangle x y x2 y2
 	}
 }
 
@@ -52,6 +52,7 @@ func web() {
 			}
 
 			fmt.Print(inputs)
+			pixelplace(inputs[0], inputs[1], uint8(inputs[2]), uint8(inputs[3]), uint8(inputs[4])) //LocX LocY R G B
 
 		} else {
 			w.Header().Set("Content-Type", "image/png")
