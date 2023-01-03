@@ -13,11 +13,10 @@ import (
 )
 
 // Global Variables since it's going to be used a lot.
-var img = canvas()
-var cimg = image.NewRGBA(img.Bounds())
+var cimg = image.NewRGBA(canvas().Bounds())
 
 func main() {
-
+	img := canvas()
 	go web() //Website operates async.
 	fmt.Print("Website is up. \n")
 
