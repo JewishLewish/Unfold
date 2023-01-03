@@ -12,6 +12,7 @@ import (
 	"strconv"
 )
 
+// Global Variables since it's going to be used a lot.
 var img = canvas()
 var cimg = image.NewRGBA(img.Bounds())
 
@@ -99,14 +100,14 @@ func canvas() image.Image {
 	return img
 }
 
-func update(cimg *image.RGBA) {
+func update(upimg *image.RGBA) {
 	e := os.Remove("main.png")
 	if e != nil {
 		log.Fatal(e)
 	}
 
 	outFile, _ := os.Create("main.png")
-	png.Encode(outFile, cimg)
+	png.Encode(outFile, upimg)
 	outFile.Close()
 }
 
