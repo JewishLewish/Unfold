@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"image"
 	"image/color"
 	"image/draw"
@@ -11,12 +12,21 @@ import (
 
 func main() {
 	img := canvas() //Fetchs canvas
-
 	cimg := image.NewRGBA(img.Bounds())
+	var locX, locY, R, G, B int
 	draw.Draw(cimg, img.Bounds(), img, image.Point{}, draw.Over)
-	cimg.Set(3, 3, color.RGBA{0, 255, 34, 255})
-
-	update(cimg) //Updates canvas
+	for true {
+		fmt.Print("Type the following: locX, locY, R, G, B:")
+		fmt.Scan(&locX, &locY, &R, &G, &B)
+		if R > 255 || G > 255 || B > 255 {
+			fmt.Print("ERROR! RGB max int goes up to 255.")
+			continue
+		}
+		cimg.Set(locX, locY, color.RGBA{uint8(R), uint8(G), uint8(B), 255})
+		update(cimg)
+	}
+	update(cimg)
+	//close
 }
 
 func canvas() image.Image {
@@ -31,8 +41,8 @@ func update(cimg *image.RGBA) {
 	if e != nil {
 		log.Fatal(e)
 	}
-	outFile, _ := os.Create("canvas.png")
-	defer outFile.Close()
 
+	outFile, _ := os.Create("canvas.png")
 	png.Encode(outFile, cimg)
+	outFile.Close()
 }
