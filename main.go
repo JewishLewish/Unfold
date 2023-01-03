@@ -43,6 +43,9 @@ func main() {
 				fmt.Print("Rectangle - X Y X2 Y2 R G B")
 				fmt.Scan(&locX, &locY, &locX2, &locY2, &r, &g, &b)
 			}
+		} else {
+			fmt.Print("Inappropriate Response \n")
+			continue
 		}
 	}
 }
