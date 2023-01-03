@@ -43,6 +43,9 @@ func main() {
 				fmt.Scan(&locX, &locY, &locX2, &locY2, &r, &g, &b)
 			} else if action == "backup" { //Backs Up The canvas
 				backup()
+			} else {
+				fmt.Print("Not approprate admin command.\n")
+				continue
 			}
 		} else {
 			fmt.Print("Inappropriate Response \n")
