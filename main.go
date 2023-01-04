@@ -1,7 +1,6 @@
 package main
 
 import (
-	"crypto/tls"
 	"fmt"
 	"image"
 	"image/color"
@@ -98,15 +97,7 @@ func web() {
 
 		}
 	})
-	listener, err := tls.Listen("tcp", ":8000", &tls.Config{
-		NextProtos: []string{"http/1.1"},
-	})
-	log.Println("https server started on :8000")
-	err = http.Serve(listener, nil)
-	if err != nil {
-		log.Fatal(err)
-	}
-	//log.Fatal(http.ListenAndServe(":8080", mux))
+	log.Fatal(http.ListenAndServe("localhost:8000", mux))
 }
 
 // Pixel Placing Mechanism
@@ -118,7 +109,6 @@ func pixelplace(locX int, locY int, R, G, B uint8) {
 	}
 	cimg.Set(locX, locY, color.RGBA{uint8(R), uint8(G), uint8(B), 255})
 	update(cimg)
-	return
 }
 
 // Admin Pixel Placing
@@ -128,7 +118,6 @@ func rectangle(lX, lY, lX2, lY2 int) {
 	draw.Draw(cimg, rect, &image.Uniform{color.White}, image.Point{lX, lX2}, draw.Over)
 	update(cimg)
 	fmt.Print("Rectangle completed! \n")
-	return
 }
 
 // Canvas Manipulation and Data Fetching
@@ -154,7 +143,6 @@ func update(upimg *image.RGBA) {
 	outFile, _ := os.Create("main.png")
 	png.Encode(outFile, upimg)
 	outFile.Close()
-	return
 }
 
 func sitecanvas() image.Image {
