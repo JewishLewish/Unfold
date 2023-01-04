@@ -28,9 +28,10 @@ func main() {
 	var locX, locY, locX2, locY2 int
 	var r, g, b uint8
 
-	for true {
+	for {
 		fmt.Print("$terminal =>")
 		fmt.Scan(&user) //Admin or User
+
 		if user == "user" {
 			fmt.Print("Place pixel - X Y R G B ->")
 			fmt.Scan(&locX, &locY, &r, &g, &b)
