@@ -139,7 +139,6 @@ func frames() {
 		fmt.Println(err)
 		return
 	}
-	fmt.Print(set.Update)
 
 	for {
 		time.Sleep(time.Duration(set.Update) * time.Second)
