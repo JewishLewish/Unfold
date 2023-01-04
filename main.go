@@ -1,6 +1,7 @@
 package main
 
 import (
+	"crypto/tls"
 	"fmt"
 	"image"
 	"image/color"
@@ -97,8 +98,15 @@ func web() {
 
 		}
 	})
-
-	log.Fatal(http.ListenAndServe(":8080", mux))
+	listener, err := tls.Listen("tcp", ":8000", &tls.Config{
+		NextProtos: []string{"http/1.1"},
+	})
+	log.Println("https server started on :8000")
+	err = http.Serve(listener, nil)
+	if err != nil {
+		log.Fatal(err)
+	}
+	//log.Fatal(http.ListenAndServe(":8080", mux))
 }
 
 // Pixel Placing Mechanism
