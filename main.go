@@ -20,11 +20,13 @@ var cimg = image.NewRGBA(canvas().Bounds())
 func main() {
 	img := canvas()
 	go web() //Website operates async.
+	fmt.Print("Website is being operated!\n")
 
-	fmt.Print("Image has been created! \n")
 	draw.Draw(cimg, img.Bounds(), img, image.Point{}, draw.Over)
+	fmt.Print("Image has been created! \n")
 
 	go frames()
+	fmt.Print("Frames system is up! \n")
 
 	var user, action string
 	var locX, locY, locX2, locY2 int
