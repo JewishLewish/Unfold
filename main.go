@@ -20,9 +20,7 @@ var cimg = image.NewRGBA(canvas().Bounds())
 func main() {
 	img := canvas()
 	go web() //Website operates async.
-	fmt.Print("Website is up. \n")
 
-	cimg := image.NewRGBA(img.Bounds())
 	fmt.Print("Image has been created! \n")
 	draw.Draw(cimg, img.Bounds(), img, image.Point{}, draw.Over)
 
@@ -103,6 +101,7 @@ func web() {
 		}
 	})
 	log.Fatal(http.ListenAndServe("0.0.0.0:8000", mux))
+	fmt.Print("Website is up. \n")
 }
 
 // Pixel Placing Mechanism
