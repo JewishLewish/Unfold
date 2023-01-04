@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"image"
 	"image/color"
@@ -10,6 +11,7 @@ import (
 	"net/http"
 	"os"
 	"strconv"
+	"time"
 )
 
 // Global Variables since it's going to be used a lot.
@@ -24,6 +26,8 @@ func main() {
 	fmt.Print("Image has been created! \n")
 	draw.Draw(cimg, img.Bounds(), img, image.Point{}, draw.Over)
 
+	go frames()
+
 	var user, action string
 	var locX, locY, locX2, locY2 int
 	var r, g, b uint8
@@ -36,7 +40,7 @@ func main() {
 			fmt.Print("Place pixel - X Y R G B ->")
 			fmt.Scan(&locX, &locY, &r, &g, &b)
 			pixelplace(locX, locY, r, g, b)
-			fmt.Print("Pixel has been placed!")
+			fmt.Print("Pixel has been placed!\n")
 		} else if user == "admin" {
 			fmt.Print("$action =>") //rectangle
 			fmt.Scan(&action)
@@ -98,7 +102,7 @@ func web() {
 
 		}
 	})
-	log.Fatal(http.ListenAndServe("localhost:8000", mux))
+	log.Fatal(http.ListenAndServe("0.0.0.0:8000", mux))
 }
 
 // Pixel Placing Mechanism
@@ -109,7 +113,6 @@ func pixelplace(locX int, locY int, R, G, B uint8) {
 		return
 	}
 	cimg.Set(locX, locY, color.RGBA{uint8(R), uint8(G), uint8(B), 255})
-	update(cimg)
 }
 
 // Admin Pixel Placing
@@ -117,8 +120,32 @@ func rectangle(lX, lY, lX2, lY2 int) {
 	fmt.Print("Drawing White Recetangle... \n")
 	rect := image.Rect(lX, lY, lX2, lY2)
 	draw.Draw(cimg, rect, &image.Uniform{color.White}, image.Point{lX, lX2}, draw.Over)
-	update(cimg)
 	fmt.Print("Rectangle completed! \n")
+}
+
+// Canvas Updating
+
+type settings struct {
+	Update int `json:"update_duration_seconds"`
+}
+
+func frames() {
+	file, _ := os.Open("settings.json")
+	defer file.Close()
+
+	var set settings
+	err := json.NewDecoder(file).Decode(&set)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	fmt.Print(set.Update)
+
+	for {
+		time.Sleep(time.Duration(set.Update) * time.Second)
+		update(cimg)
+	}
+
 }
 
 // Canvas Manipulation and Data Fetching
