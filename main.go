@@ -175,11 +175,6 @@ func web(port int, addr string) {
 
 // Pixel Placing Mechanism
 func pixelplace(locX int, locY int, R, G, B uint8) {
-
-	if R > 255 || G > 255 || B > 255 {
-		fmt.Print("ERROR! RGB max int goes up to 255.")
-		return
-	}
 	cimg.Set(locX, locY, color.RGBA{uint8(R), uint8(G), uint8(B), 255})
 }
 
