@@ -17,15 +17,30 @@ import (
 // Global Variables since it's going to be used a lot.
 var cimg = image.NewRGBA(canvas().Bounds())
 
+type settings struct {
+	Update int `json:"update_duration_seconds"`
+	Port   int `json:"port"`
+}
+
 func main() {
+	file, _ := os.Open("settings.json")
+	defer file.Close()
+
+	var set settings
+	err := json.NewDecoder(file).Decode(&set)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
 	img := canvas()
-	go web() //Website operates async.
+	go web(set.Port) //Website operates async.
 	fmt.Print("Website is being operated!\n")
 
 	draw.Draw(cimg, img.Bounds(), img, image.Point{}, draw.Over)
 	fmt.Print("Image has been created! \n")
 
-	go frames()
+	go frames(set.Update)
 	fmt.Print("Frames system is up! \n")
 
 	var user, action string
@@ -63,7 +78,7 @@ func main() {
 }
 
 // Website
-func web() {
+func web(port int) {
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == http.MethodPost {
@@ -102,7 +117,8 @@ func web() {
 
 		}
 	})
-	log.Fatal(http.ListenAndServe("0.0.0.0:8000", mux))
+	target := "0.0.0.0:" + strconv.Itoa(port)
+	log.Fatal(http.ListenAndServe(target, mux))
 	fmt.Print("Website is up. \n")
 }
 
@@ -126,23 +142,9 @@ func rectangle(lX, lY, lX2, lY2 int) {
 
 // Canvas Updating
 
-type settings struct {
-	Update int `json:"update_duration_seconds"`
-}
-
-func frames() {
-	file, _ := os.Open("settings.json")
-	defer file.Close()
-
-	var set settings
-	err := json.NewDecoder(file).Decode(&set)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-
+func frames(delay int) {
 	for {
-		time.Sleep(time.Duration(set.Update) * time.Second)
+		time.Sleep(time.Duration(delay) * time.Second)
 		update(cimg)
 	}
 

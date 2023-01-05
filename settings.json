@@ -1,3 +1,4 @@
 {
-  "update_duration_seconds":2
+  "update_duration_seconds":2,
+  "port":25567
 }
