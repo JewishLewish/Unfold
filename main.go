@@ -102,8 +102,7 @@ func getpixel(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	c := cimg.At(locX, locY)
-	re, g, b, _ := c.RGBA()
+	re, g, b, _ := cimg.At(locX, locY).RGBA()
 
 	info := info{R: uint8(re), G: uint8(g), B: uint8(b)}
 	json.NewEncoder(w).Encode(info)
