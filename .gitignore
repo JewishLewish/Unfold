@@ -4,3 +4,4 @@
 unfold
 *.json
 target.py
+*.jpg
