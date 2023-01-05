@@ -102,6 +102,15 @@ func getpixel(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if locX > cimg.Bounds().Max.X {
+		http.Error(w, "X location is outside of Canvas range.", http.StatusForbidden)
+		return
+	}
+	if locY > cimg.Bounds().Max.Y {
+		http.Error(w, "Y location is outside of Canvas range.", http.StatusForbidden)
+		return
+	}
+
 	re, g, b, _ := cimg.At(locX, locY).RGBA()
 
 	info := info{R: uint8(re), G: uint8(g), B: uint8(b)}
