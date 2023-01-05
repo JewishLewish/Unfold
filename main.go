@@ -17,6 +17,7 @@ import (
 )
 
 // Global Variables since it's going to be used a lot.
+var origimg = canvas()
 var cimg = image.NewRGBA(canvas().Bounds())
 
 type settings struct {
@@ -194,18 +195,14 @@ func update(upimg *image.RGBA) {
 }
 
 func sitecanvas() image.Image {
-	canvas, _ := os.Open("canvas.png") //canvas = Main folder
-	img, _ := png.Decode(canvas)
-	canvas.Close()
-
 	art, _ := os.Open("main.png")
 	artedits, _ := png.Decode(art)
 	art.Close()
 
 	//Create Image to merge.
-	bounds := img.Bounds()
+	bounds := origimg.Bounds()
 	newImg := image.NewRGBA(bounds)
-	draw.Draw(newImg, bounds, img, image.Point{0, 0}, draw.Over)
+	draw.Draw(newImg, bounds, origimg, image.Point{0, 0}, draw.Over)
 	draw.Draw(newImg, bounds, artedits, image.Point{0, 0}, draw.Over)
 	return newImg
 }
