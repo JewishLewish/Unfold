@@ -18,8 +18,9 @@ import (
 var cimg = image.NewRGBA(canvas().Bounds())
 
 type settings struct {
-	Update int `json:"update_duration_seconds"`
-	Port   int `json:"port"`
+	Update int    `json:"update_duration_seconds"`
+	Port   int    `json:"port"`
+	Addr   string `json:"address"`
 }
 
 func main() {
@@ -34,7 +35,7 @@ func main() {
 	}
 
 	img := canvas()
-	go web(set.Port) //Website operates async.
+	go web(set.Port, set.Addr) //Website operates async.
 	fmt.Print("Website is being operated!\n")
 
 	draw.Draw(cimg, img.Bounds(), img, image.Point{}, draw.Over)
@@ -78,7 +79,7 @@ func main() {
 }
 
 // Website
-func web(port int) {
+func web(port int, addr string) {
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == http.MethodPost {
@@ -117,7 +118,8 @@ func web(port int) {
 
 		}
 	})
-	target := "0.0.0.0:" + strconv.Itoa(port)
+	target := addr + ":" + strconv.Itoa(port)
+	fmt.Print(target + "\n")
 	log.Fatal(http.ListenAndServe(target, mux))
 	fmt.Print("Website is up. \n")
 }

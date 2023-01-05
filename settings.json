@@ -1,4 +1,5 @@
 {
   "update_duration_seconds":2,
-  "port":25567
+  "port":25567,
+  "address":"0.0.0.0"
 }
