@@ -81,6 +81,35 @@ func main() {
 	}
 }
 
+type info struct {
+	R uint8 `json:"R"`
+	G uint8 `json:"G"`
+	B uint8 `json:"B"`
+}
+
+func getpixel(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	queryParams := r.URL.Query()
+	locX, err := strconv.Atoi(queryParams.Get("x"))
+	if err != nil {
+		http.Error(w, "Location X cannot be properly parsed.", http.StatusBadRequest)
+		return
+	}
+
+	locY, err := strconv.Atoi(queryParams.Get("y"))
+	if err != nil {
+		http.Error(w, "Location Y cannot be properly parsed.", http.StatusBadRequest)
+		return
+	}
+
+	c := cimg.At(locX, locY)
+	re, g, b, _ := c.RGBA()
+
+	info := info{R: uint8(re), G: uint8(g), B: uint8(b)}
+	json.NewEncoder(w).Encode(info)
+
+}
+
 // Website
 func web(port int, addr string) {
 	mux := http.NewServeMux()
@@ -134,9 +163,11 @@ func web(port int, addr string) {
 			if f, ok := w.(http.Flusher); ok {
 				f.Flush()
 			}
-
 		}
 	})
+
+	http.HandleFunc("/pixel", getpixel)
+
 	target := addr + ":" + strconv.Itoa(port)
 	fmt.Print(target + "\n")
 	log.Fatal(http.ListenAndServe(target, mux))
