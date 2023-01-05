@@ -7,10 +7,12 @@ import (
 	"image/color"
 	"image/draw"
 	"image/png"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -89,18 +91,32 @@ func web(port int, addr string) {
 				return
 			}
 
+			requestBody, err := ioutil.ReadAll(r.Body)
+			if err != nil {
+				http.Error(w, "Error with requestBody reading.", http.StatusBadRequest)
+				return
+			}
+
+			//fmt.Println(string(requestBody)) //0 0 0 0 0
+			var in = strings.Fields(string(requestBody))
+
 			var inputs [5]int
 			for i := 0; i < 5; i++ {
-				inputStr := r.Form.Get(fmt.Sprintf("input%d", i))
+				inputStr := in[i]
 				input, err := strconv.Atoi(inputStr)
 				if err != nil {
-					http.Error(w, "Error parsing int inputs", http.StatusBadRequest)
+					http.Error(w, "Error parsing int inputs. The input is:", http.StatusBadRequest)
 					return
 				}
 				inputs[i] = input
 			}
 
-			fmt.Print(inputs)
+			if inputs[0] > cimg.Bounds().Max.X {
+				http.Error(w, "X location is outside of Canvas range.", http.StatusForbidden)
+			}
+			if inputs[1] > cimg.Bounds().Max.Y {
+				http.Error(w, "Y location is outside of Canvas range.", http.StatusForbidden)
+			}
 			pixelplace(inputs[0], inputs[1], uint8(inputs[2]), uint8(inputs[3]), uint8(inputs[4])) //LocX LocY R G B
 
 		} else {
