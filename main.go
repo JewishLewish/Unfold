@@ -119,6 +119,8 @@ func web(port int, addr string) {
 				http.Error(w, "Y location is outside of Canvas range.", http.StatusForbidden)
 			}
 			pixelplace(inputs[0], inputs[1], uint8(inputs[2]), uint8(inputs[3]), uint8(inputs[4])) //LocX LocY R G B
+			loc := fmt.Sprint(inputs[0]) + "," + fmt.Sprint(inputs[1])
+			w.Write([]byte("Pixel successfully placed at: " + loc))
 
 		} else {
 			w.Header().Set("Content-Type", "image/png")
@@ -138,7 +140,6 @@ func web(port int, addr string) {
 	target := addr + ":" + strconv.Itoa(port)
 	fmt.Print(target + "\n")
 	log.Fatal(http.ListenAndServe(target, mux))
-	fmt.Print("Website is up. \n")
 }
 
 // Pixel Placing Mechanism
@@ -159,14 +160,13 @@ func rectangle(lX, lY, lX2, lY2 int) {
 	fmt.Print("Rectangle completed! \n")
 }
 
-// Canvas Updating
+// Canvas Updating - Constantly operating
 
 func frames(delay int) {
 	for {
 		time.Sleep(time.Duration(delay) * time.Second)
 		update(cimg)
 	}
-
 }
 
 // Canvas Manipulation and Data Fetching
