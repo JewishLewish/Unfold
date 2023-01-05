@@ -112,8 +112,10 @@ func getpixel(w http.ResponseWriter, r *http.Request) {
 
 // Website
 func web(port int, addr string) {
+
 	mux := http.NewServeMux()
-	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("/pixel", getpixel)
+	mux.HandleFunc("/canvas", func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == http.MethodPost {
 			err := r.ParseForm()
 			if err != nil {
@@ -165,8 +167,6 @@ func web(port int, addr string) {
 			}
 		}
 	})
-
-	http.HandleFunc("/pixel", getpixel)
 
 	target := addr + ":" + strconv.Itoa(port)
 	fmt.Print(target + "\n")
