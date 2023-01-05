@@ -194,10 +194,20 @@ func update(upimg *image.RGBA) {
 }
 
 func sitecanvas() image.Image {
-	canvas, _ := os.Open("main.png") //canvas = Main folder.
+	canvas, _ := os.Open("canvas.png") //canvas = Main folder
 	img, _ := png.Decode(canvas)
 	canvas.Close()
-	return img
+
+	art, _ := os.Open("main.png")
+	artedits, _ := png.Decode(art)
+	art.Close()
+
+	//Create Image to merge.
+	bounds := img.Bounds()
+	newImg := image.NewRGBA(bounds)
+	draw.Draw(newImg, bounds, img, image.Point{0, 0}, draw.Over)
+	draw.Draw(newImg, bounds, artedits, image.Point{0, 0}, draw.Over)
+	return newImg
 }
 
 func backup() {
