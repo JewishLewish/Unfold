@@ -144,43 +144,43 @@ func web(port int, addr string) {
 			if !rateLimits[clientIP].Allow() {
 				http.Error(w, "Too many requests", http.StatusTooManyRequests)
 				return
-			}
-
-			err := r.ParseForm()
-			if err != nil {
-				http.Error(w, "Error parsing form data", http.StatusBadRequest)
-				return
-			}
-
-			requestBody, err := ioutil.ReadAll(r.Body)
-			if err != nil {
-				http.Error(w, "Error with requestBody reading.", http.StatusBadRequest)
-				return
-			}
-
-			//fmt.Println(string(requestBody)) //0 0 0 0 0
-			var in = strings.Fields(string(requestBody))
-
-			var inputs [5]int
-			for i := 0; i < 5; i++ {
-				inputStr := in[i]
-				input, err := strconv.Atoi(inputStr)
+			} else {
+				err := r.ParseForm()
 				if err != nil {
-					http.Error(w, "Error parsing int inputs. The input is:", http.StatusBadRequest)
+					http.Error(w, "Error parsing form data", http.StatusBadRequest)
 					return
 				}
-				inputs[i] = input
-			}
 
-			if inputs[0] > cimg.Bounds().Max.X {
-				http.Error(w, "X location is outside of Canvas range.", http.StatusForbidden)
+				requestBody, err := ioutil.ReadAll(r.Body)
+				if err != nil {
+					http.Error(w, "Error with requestBody reading.", http.StatusBadRequest)
+					return
+				}
+
+				//fmt.Println(string(requestBody)) //0 0 0 0 0
+				var in = strings.Fields(string(requestBody))
+
+				var inputs [5]int
+				for i := 0; i < 5; i++ {
+					inputStr := in[i]
+					input, err := strconv.Atoi(inputStr)
+					if err != nil {
+						http.Error(w, "Error parsing int inputs. The input is:", http.StatusBadRequest)
+						return
+					}
+					inputs[i] = input
+				}
+
+				if inputs[0] > cimg.Bounds().Max.X {
+					http.Error(w, "X location is outside of Canvas range.", http.StatusForbidden)
+				}
+				if inputs[1] > cimg.Bounds().Max.Y {
+					http.Error(w, "Y location is outside of Canvas range.", http.StatusForbidden)
+				}
+				pixelplace(inputs[0], inputs[1], uint8(inputs[2]), uint8(inputs[3]), uint8(inputs[4])) //LocX LocY R G B
+				loc := fmt.Sprint(inputs[0]) + "," + fmt.Sprint(inputs[1])
+				w.Write([]byte("Pixel successfully placed at: " + loc))
 			}
-			if inputs[1] > cimg.Bounds().Max.Y {
-				http.Error(w, "Y location is outside of Canvas range.", http.StatusForbidden)
-			}
-			pixelplace(inputs[0], inputs[1], uint8(inputs[2]), uint8(inputs[3]), uint8(inputs[4])) //LocX LocY R G B
-			loc := fmt.Sprint(inputs[0]) + "," + fmt.Sprint(inputs[1])
-			w.Write([]byte("Pixel successfully placed at: " + loc))
 
 		} else {
 			w.Header().Set("Content-Type", "image/png")
@@ -250,15 +250,11 @@ func update(upimg *image.RGBA) {
 }
 
 func sitecanvas() image.Image {
-	art, _ := os.Open("main.png")
-	artedits, _ := png.Decode(art)
-	art.Close()
-
 	//Create Image to merge.
 	bounds := origimg.Bounds()
 	newImg := image.NewRGBA(bounds)
 	draw.Draw(newImg, bounds, origimg, image.Point{0, 0}, draw.Over)
-	draw.Draw(newImg, bounds, artedits, image.Point{0, 0}, draw.Over)
+	draw.Draw(newImg, bounds, cimg, image.Point{0, 0}, draw.Over)
 	return newImg
 }
 
