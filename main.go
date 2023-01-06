@@ -119,10 +119,7 @@ func getpixel(w http.ResponseWriter, r *http.Request) {
 }
 
 func homepage(w http.ResponseWriter, r *http.Request) {
-	server := r.Context().Value(http.ServerContextKey).(*http.Server)
-	ip := strings.Split(server.Addr, ":")[0]
-	port := strings.Split(server.Addr, ":")[1]
-	w.Write([]byte("Go to: http://" + ip + ":" + port + "/canvas for the canvas.\n\nFor getting an individual pixel go to: http://" + ip + ":" + port + "/pixel?x=0&y=0\n"))
+	w.Write([]byte("For the canvas. Go to '<web-address:port>/canvas'. \n\nFor getting an individual pixel go to: '<web-address:port>/pixel?x=0&y=0'\n"))
 }
 
 // Website
