@@ -139,7 +139,7 @@ func web(port int, addr string) {
 
 			// Check if we have a rate limiter for the client IP, create one if not
 			if rateLimits[clientIP] == nil {
-				rateLimits[clientIP] = rate.NewLimiter(rate.Limit(120), 120) //Ratelimits 120 pixels per minute.
+				rateLimits[clientIP] = rate.NewLimiter(rate.Limit(180), 180) //Ratelimits 180 pixels per minute per user of request.
 			}
 			if !rateLimits[clientIP].Allow() {
 				http.Error(w, "Too many requests", http.StatusTooManyRequests)
