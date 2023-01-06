@@ -14,11 +14,16 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"golang.org/x/time/rate"
 )
 
 // Global Variables since it's going to be used a lot.
 var origimg = canvas()
 var cimg = image.NewRGBA(canvas().Bounds())
+
+// This is used to ratelimit each user individually.
+var rateLimits = make(map[string]*rate.Limiter)
 
 type settings struct {
 	Update int    `json:"update_duration_seconds"`
@@ -130,6 +135,17 @@ func web(port int, addr string) {
 	mux.HandleFunc("/pixel", getpixel)
 	mux.HandleFunc("/canvas", func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == http.MethodPost {
+			clientIP := r.RemoteAddr
+
+			// Check if we have a rate limiter for the client IP, create one if not
+			if rateLimits[clientIP] == nil {
+				rateLimits[clientIP] = rate.NewLimiter(rate.Limit(120), 120) //Ratelimits 120 pixels per minute.
+			}
+			if !rateLimits[clientIP].Allow() {
+				http.Error(w, "Too many requests", http.StatusTooManyRequests)
+				return
+			}
+
 			err := r.ParseForm()
 			if err != nil {
 				http.Error(w, "Error parsing form data", http.StatusBadRequest)
