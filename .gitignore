@@ -3,5 +3,6 @@
 *.exe
 unfold
 *.json
-target.py
+*.py
+*.pypy
 *.jpg

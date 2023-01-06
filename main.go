@@ -15,7 +15,7 @@ import (
 	"strings"
 	"time"
 
-	"golang.org/x/time/rate"
+	rate "golang.org/x/time/rate"
 )
 
 // Global Variables since it's going to be used a lot.
@@ -29,6 +29,7 @@ type settings struct {
 	Update int    `json:"update_duration_seconds"`
 	Port   int    `json:"port"`
 	Addr   string `json:"address"`
+	rl     int    `json:ratelimit`
 }
 
 func main() {
@@ -43,7 +44,7 @@ func main() {
 	}
 
 	img := canvas()
-	go web(set.Port, set.Addr) //Website operates async.
+	go web(set.Port, set.Addr, set.rl) //Website operates async.
 	fmt.Print("Website is being operated!\n")
 
 	draw.Draw(cimg, img.Bounds(), img, image.Point{}, draw.Over)
@@ -128,59 +129,56 @@ func homepage(w http.ResponseWriter, r *http.Request) {
 }
 
 // Website
-func web(port int, addr string) {
+func web(port int, addr string, ratelim int) {
 
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", homepage)
 	mux.HandleFunc("/pixel", getpixel)
 	mux.HandleFunc("/canvas", func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == http.MethodPost {
-			clientIP := r.RemoteAddr
+			clientIP := strings.Split(r.RemoteAddr, ":")[0]
 
 			// Check if we have a rate limiter for the client IP, create one if not
 			if rateLimits[clientIP] == nil {
-				rateLimits[clientIP] = rate.NewLimiter(rate.Limit(180), 180) //Ratelimits 180 pixels per minute per user of request.
+				print(clientIP)
+				rateLimits[clientIP] = rate.NewLimiter(rate.Limit(ratelim), ratelim) //Ratelimits ratelim (default: 180) pixels per minute per user of request.
 			}
-			if !rateLimits[clientIP].Allow() {
-				http.Error(w, "Too many requests", http.StatusTooManyRequests)
+
+			err := r.ParseForm()
+			if err != nil {
+				http.Error(w, "Error parsing form data", http.StatusBadRequest)
 				return
-			} else {
-				err := r.ParseForm()
-				if err != nil {
-					http.Error(w, "Error parsing form data", http.StatusBadRequest)
-					return
-				}
-
-				requestBody, err := ioutil.ReadAll(r.Body)
-				if err != nil {
-					http.Error(w, "Error with requestBody reading.", http.StatusBadRequest)
-					return
-				}
-
-				//fmt.Println(string(requestBody)) //0 0 0 0 0
-				var in = strings.Fields(string(requestBody))
-
-				var inputs [5]int
-				for i := 0; i < 5; i++ {
-					inputStr := in[i]
-					input, err := strconv.Atoi(inputStr)
-					if err != nil {
-						http.Error(w, "Error parsing int inputs. The input is:", http.StatusBadRequest)
-						return
-					}
-					inputs[i] = input
-				}
-
-				if inputs[0] > cimg.Bounds().Max.X {
-					http.Error(w, "X location is outside of Canvas range.", http.StatusForbidden)
-				}
-				if inputs[1] > cimg.Bounds().Max.Y {
-					http.Error(w, "Y location is outside of Canvas range.", http.StatusForbidden)
-				}
-				pixelplace(inputs[0], inputs[1], uint8(inputs[2]), uint8(inputs[3]), uint8(inputs[4])) //LocX LocY R G B
-				loc := fmt.Sprint(inputs[0]) + "," + fmt.Sprint(inputs[1])
-				w.Write([]byte("Pixel successfully placed at: " + loc))
 			}
+
+			requestBody, err := ioutil.ReadAll(r.Body)
+			if err != nil {
+				http.Error(w, "Error with requestBody reading.", http.StatusBadRequest)
+				return
+			}
+
+			//fmt.Println(string(requestBody)) //0 0 0 0 0
+			var in = strings.Fields(string(requestBody))
+
+			var inputs [5]int
+			for i := 0; i < 5; i++ {
+				inputStr := in[i]
+				input, err := strconv.Atoi(inputStr)
+				if err != nil {
+					http.Error(w, "Error parsing int inputs. The input is:", http.StatusBadRequest)
+					return
+				}
+				inputs[i] = input
+			}
+
+			if inputs[0] > cimg.Bounds().Max.X {
+				http.Error(w, "X location is outside of Canvas range.", http.StatusForbidden)
+			}
+			if inputs[1] > cimg.Bounds().Max.Y {
+				http.Error(w, "Y location is outside of Canvas range.", http.StatusForbidden)
+			}
+			pixelplace(inputs[0], inputs[1], uint8(inputs[2]), uint8(inputs[3]), uint8(inputs[4])) //LocX LocY R G B
+			loc := fmt.Sprint(inputs[0]) + "," + fmt.Sprint(inputs[1])
+			w.Write([]byte("Pixel successfully placed at: " + loc))
 
 		} else {
 			w.Header().Set("Content-Type", "image/png")
