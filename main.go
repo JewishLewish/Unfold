@@ -118,10 +118,17 @@ func getpixel(w http.ResponseWriter, r *http.Request) {
 
 }
 
+func homepage(w http.ResponseWriter, r *http.Request) {
+	ip := strings.Split(r.RemoteAddr, ":")[0]
+	port := strings.Split(r.RemoteAddr, ":")[1]
+	w.Write([]byte("Go to: http://" + ip + ":" + port + "/canvas for the canvas.\n\nFor getting an individual pixel go to: http://" + ip + ":" + port + "/pixel?x=0&y=0\n"))
+}
+
 // Website
 func web(port int, addr string) {
 
 	mux := http.NewServeMux()
+	mux.HandleFunc("/", homepage)
 	mux.HandleFunc("/pixel", getpixel)
 	mux.HandleFunc("/canvas", func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == http.MethodPost {
