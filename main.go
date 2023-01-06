@@ -26,10 +26,10 @@ var cimg = image.NewRGBA(canvas().Bounds())
 var rateLimits = make(map[string]*rate.Limiter)
 
 type settings struct {
-	Update int    `json:"update_duration_seconds"`
-	Port   int    `json:"port"`
-	Addr   string `json:"address"`
-	rl     int    `json:ratelimit`
+	Update  int    `json:"update_duration_seconds"`
+	Port    int    `json:"port"`
+	Addr    string `json:"address"`
+	ratelim int    `json:ratelimit`
 }
 
 func main() {
@@ -44,7 +44,7 @@ func main() {
 	}
 
 	img := canvas()
-	go web(set.Port, set.Addr, set.rl) //Website operates async.
+	go web(set.Port, set.Addr, set.ratelim) //Website operates async.
 	fmt.Print("Website is being operated!\n")
 
 	draw.Draw(cimg, img.Bounds(), img, image.Point{}, draw.Over)
