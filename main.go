@@ -7,7 +7,6 @@ import (
 	"image/color"
 	"image/draw"
 	"image/png"
-	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
@@ -26,10 +25,10 @@ var cimg = image.NewRGBA(canvas().Bounds())
 var rateLimits = make(map[string]*rate.Limiter)
 
 type settings struct {
-	Update  int    `json:"update_duration_seconds"`
-	Port    int    `json:"port"`
-	Addr    string `json:"address"`
-	ratelim int    `json:ratelimit`
+	Update int    `json:"update_duration_seconds"`
+	Port   int    `json:"port"`
+	Addr   string `json:"address"`
+	Rlim   int    `json:"ratelimit"`
 }
 
 func main() {
@@ -44,7 +43,7 @@ func main() {
 	}
 
 	img := canvas()
-	go web(set.Port, set.Addr, set.ratelim) //Website operates async.
+	go web(set.Port, set.Addr, set.Rlim) //Website operates async.
 	fmt.Print("Website is being operated!\n")
 
 	draw.Draw(cimg, img.Bounds(), img, image.Point{}, draw.Over)
@@ -129,6 +128,10 @@ func homepage(w http.ResponseWriter, r *http.Request) {
 }
 
 // Website
+type Payload struct {
+	UInput []int `json:"data"`
+}
+
 func web(port int, addr string, ratelim int) {
 
 	mux := http.NewServeMux()
@@ -136,6 +139,7 @@ func web(port int, addr string, ratelim int) {
 	mux.HandleFunc("/pixel", getpixel)
 	mux.HandleFunc("/canvas", func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == http.MethodPost {
+			r.Header.Set("Content-Type", "application/json")
 			clientIP := strings.Split(r.RemoteAddr, ":")[0]
 
 			// Check if we have a rate limiter for the client IP, create one if not
@@ -143,41 +147,50 @@ func web(port int, addr string, ratelim int) {
 				print(clientIP)
 				rateLimits[clientIP] = rate.NewLimiter(rate.Limit(ratelim), ratelim) //Ratelimits ratelim (default: 180) pixels per minute per user of request.
 			}
-
-			err := r.ParseForm()
-			if err != nil {
-				http.Error(w, "Error parsing form data", http.StatusBadRequest)
+			if !rateLimits[clientIP].Allow() {
+				http.Error(w, "Too many requests", http.StatusTooManyRequests)
+				return
+			}
+			var uin Payload
+			if err := json.NewDecoder(r.Body).Decode(&uin); err != nil {
+				http.Error(w, "Error decoding JSON payload", http.StatusBadRequest)
 				return
 			}
 
-			requestBody, err := ioutil.ReadAll(r.Body)
-			if err != nil {
-				http.Error(w, "Error with requestBody reading.", http.StatusBadRequest)
-				return
-			}
+			//err := r.ParseForm()
+			//if err != nil {
+			//	http.Error(w, "Error parsing form data", http.StatusBadRequest)
+			//	return
+			//}
+
+			//requestBody, err := ioutil.ReadAll(r.Body)
+			//if err != nil {
+			//	http.Error(w, "Error with requestBody reading.", http.StatusBadRequest)
+			//	return
+			//}
 
 			//fmt.Println(string(requestBody)) //0 0 0 0 0
-			var in = strings.Fields(string(requestBody))
+			//var in = strings.Fields(string(requestBody))
 
-			var inputs [5]int
-			for i := 0; i < 5; i++ {
-				inputStr := in[i]
-				input, err := strconv.Atoi(inputStr)
-				if err != nil {
-					http.Error(w, "Error parsing int inputs. The input is:", http.StatusBadRequest)
-					return
-				}
-				inputs[i] = input
-			}
+			//var uin [5]int
+			//for i := 0; i < 5; i++ {
+			//	inputStr := in[i]
+			//	input, err := strconv.Atoi(inputStr)
+			//	if err != nil {
+			//		http.Error(w, "Error parsing int uin. The input is:", http.StatusBadRequest)
+			//		return
+			//	}
+			//	uin[i] = input
+			//}
 
-			if inputs[0] > cimg.Bounds().Max.X {
+			if uin.UInput[0] > cimg.Bounds().Max.X {
 				http.Error(w, "X location is outside of Canvas range.", http.StatusForbidden)
 			}
-			if inputs[1] > cimg.Bounds().Max.Y {
+			if uin.UInput[1] > cimg.Bounds().Max.Y {
 				http.Error(w, "Y location is outside of Canvas range.", http.StatusForbidden)
 			}
-			pixelplace(inputs[0], inputs[1], uint8(inputs[2]), uint8(inputs[3]), uint8(inputs[4])) //LocX LocY R G B
-			loc := fmt.Sprint(inputs[0]) + "," + fmt.Sprint(inputs[1])
+			pixelplace(uin.UInput[0], uin.UInput[1], uint8(uin.UInput[2]), uint8(uin.UInput[3]), uint8(uin.UInput[4])) //LocX LocY R G B
+			loc := fmt.Sprint(uin.UInput[0]) + "," + fmt.Sprint(uin.UInput[1])
 			w.Write([]byte("Pixel successfully placed at: " + loc))
 
 		} else {
