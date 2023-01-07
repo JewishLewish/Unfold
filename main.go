@@ -124,7 +124,7 @@ func getpixel(w http.ResponseWriter, r *http.Request) {
 }
 
 func homepage(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("For the canvas. Go to '<web-address:port>/canvas'. \n\nFor getting an individual pixel go to: '<web-address:port>/pixel?x=0&y=0'\n"))
+	http.ServeFile(w, r, "static/index.html")
 }
 
 // Website
@@ -186,6 +186,8 @@ func web(port int, addr string, ratelim int) {
 
 	target := addr + ":" + strconv.Itoa(port)
 	fmt.Print(target + "\n")
+	staticHandler := http.FileServer(http.Dir("static"))
+	http.Handle("/assets/", staticHandler)
 	log.Fatal(http.ListenAndServe(target, mux))
 }
 
