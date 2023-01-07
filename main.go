@@ -238,31 +238,23 @@ func update(upimg *image.RGBA) {
 
 func sitecanvas() image.Image {
 	//Create Image to merge.
-	bounds := origimg.Bounds()
-	newImg := image.NewRGBA(bounds)
-	draw.Draw(newImg, bounds, origimg, image.Point{0, 0}, draw.Over)
-	draw.Draw(newImg, bounds, cimg, image.Point{0, 0}, draw.Over)
-	return newImg
+	return merge()
 }
 
 func backup() {
 	fmt.Print("Backing up main.png...\n")
-	canvas, _ := os.Open("canvas.png") //canvas = Main folder
-	img, _ := png.Decode(canvas)
-	canvas.Close()
-
-	art, _ := os.Open("main.png")
-	artedits, _ := png.Decode(art)
-	art.Close()
-
-	//Create Image to merge.
-	bounds := img.Bounds()
-	newImg := image.NewRGBA(bounds)
-	draw.Draw(newImg, bounds, img, image.Point{0, 0}, draw.Over)
-	draw.Draw(newImg, bounds, artedits, image.Point{0, 0}, draw.Over)
+	newImg := merge()
 
 	outFile, _ := os.Create("backup.png")
 	png.Encode(outFile, newImg)
 	outFile.Close()
 	fmt.Print("Backup is complete. backup.png is made!\n")
+}
+
+func merge() image.Image {
+	bounds := origimg.Bounds()
+	newImg := image.NewRGBA(bounds)
+	draw.Draw(newImg, bounds, origimg, image.Point{0, 0}, draw.Over)
+	draw.Draw(newImg, bounds, cimg, image.Point{0, 0}, draw.Over)
+	return newImg
 }
