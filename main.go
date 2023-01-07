@@ -29,6 +29,7 @@ type settings struct {
 	Port   int    `json:"port"`
 	Addr   string `json:"address"`
 	Rlim   int    `json:"ratelimit"`
+	SFil   string `json:"sitefiles"`
 }
 
 func main() {
@@ -124,7 +125,16 @@ func getpixel(w http.ResponseWriter, r *http.Request) {
 }
 
 func homepage(w http.ResponseWriter, r *http.Request) {
-	http.ServeFile(w, r, "static/index.html")
+	file, _ := os.Open("settings.json")
+	defer file.Close()
+
+	var set settings
+	json.NewDecoder(file).Decode(&set)
+	if set.SFil == "none" {
+		return
+	} else {
+		http.ServeFile(w, r, set.SFil)
+	}
 }
 
 // Website
@@ -186,8 +196,6 @@ func web(port int, addr string, ratelim int) {
 
 	target := addr + ":" + strconv.Itoa(port)
 	fmt.Print(target + "\n")
-	staticHandler := http.FileServer(http.Dir("static"))
-	http.Handle("/assets/", staticHandler)
 	log.Fatal(http.ListenAndServe(target, mux))
 }
 
