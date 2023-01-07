@@ -243,10 +243,8 @@ func sitecanvas() image.Image {
 
 func backup() {
 	fmt.Print("Backing up main.png...\n")
-	newImg := merge()
-
 	outFile, _ := os.Create("backup.png")
-	png.Encode(outFile, newImg)
+	png.Encode(outFile, merge())
 	outFile.Close()
 	fmt.Print("Backup is complete. backup.png is made!\n")
 }
