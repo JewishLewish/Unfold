@@ -207,7 +207,7 @@ func rectangle(lX, lY, lX2, lY2 int) {
 func frames(delay int) {
 	for {
 		time.Sleep(time.Duration(delay) * time.Second)
-		update(cimg)
+		go update(cimg)
 	}
 }
 
