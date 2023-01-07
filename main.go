@@ -143,55 +143,31 @@ func web(port int, addr string, ratelim int) {
 			clientIP := strings.Split(r.RemoteAddr, ":")[0]
 
 			// Check if we have a rate limiter for the client IP, create one if not
-			if rateLimits[clientIP] == nil {
-				print(clientIP)
-				rateLimits[clientIP] = rate.NewLimiter(rate.Limit(ratelim), ratelim) //Ratelimits ratelim (default: 180) pixels per minute per user of request.
-			}
 			if !rateLimits[clientIP].Allow() {
 				http.Error(w, "Too many requests", http.StatusTooManyRequests)
 				return
+			} else if rateLimits[clientIP] == nil {
+				print(clientIP)
+				rateLimits[clientIP] = rate.NewLimiter(rate.Limit(ratelim), ratelim) //Ratelimits ratelim (default: 180) pixels per second per user of request.
 			}
+
 			var uin Payload
 			if err := json.NewDecoder(r.Body).Decode(&uin); err != nil {
 				http.Error(w, "Error decoding JSON payload", http.StatusBadRequest)
 				return
 			}
 
-			//err := r.ParseForm()
-			//if err != nil {
-			//	http.Error(w, "Error parsing form data", http.StatusBadRequest)
-			//	return
-			//}
-
-			//requestBody, err := ioutil.ReadAll(r.Body)
-			//if err != nil {
-			//	http.Error(w, "Error with requestBody reading.", http.StatusBadRequest)
-			//	return
-			//}
-
-			//fmt.Println(string(requestBody)) //0 0 0 0 0
-			//var in = strings.Fields(string(requestBody))
-
-			//var uin [5]int
-			//for i := 0; i < 5; i++ {
-			//	inputStr := in[i]
-			//	input, err := strconv.Atoi(inputStr)
-			//	if err != nil {
-			//		http.Error(w, "Error parsing int uin. The input is:", http.StatusBadRequest)
-			//		return
-			//	}
-			//	uin[i] = input
-			//}
-
 			if uin.UInput[0] > cimg.Bounds().Max.X {
 				http.Error(w, "X location is outside of Canvas range.", http.StatusForbidden)
+				return
 			}
 			if uin.UInput[1] > cimg.Bounds().Max.Y {
 				http.Error(w, "Y location is outside of Canvas range.", http.StatusForbidden)
+				return
 			}
-			pixelplace(uin.UInput[0], uin.UInput[1], uint8(uin.UInput[2]), uint8(uin.UInput[3]), uint8(uin.UInput[4])) //LocX LocY R G B
-			loc := fmt.Sprint(uin.UInput[0]) + "," + fmt.Sprint(uin.UInput[1])
-			w.Write([]byte("Pixel successfully placed at: " + loc))
+
+			go pixelplace(uin.UInput[0], uin.UInput[1], uint8(uin.UInput[2]), uint8(uin.UInput[3]), uint8(uin.UInput[4])) //LocX LocY R G B
+			w.Write([]byte("Pixel successfully placed at: " + fmt.Sprint(uin.UInput[0]) + "," + fmt.Sprint(uin.UInput[1])))
 
 		} else {
 			w.Header().Set("Content-Type", "image/png")
