@@ -192,6 +192,11 @@ func web(port int, addr string, ratelim int) {
 			w.Write([]byte("Pixel successfully placed at: " + fmt.Sprint(uin.UInput[0]) + "," + fmt.Sprint(uin.UInput[1])))
 
 		} else {
+			if r.Header.Get("X-Jimp") == "read" {
+				http.Error(w, "Forbidden", http.StatusForbidden)
+				return
+			}
+
 			w.Header().Set("Content-Type", "image/png")
 			w.Header().Set("Cache-Control", "no-cache")
 			w.Header().Set("Connection", "upgrade")
