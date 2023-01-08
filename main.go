@@ -25,6 +25,7 @@ var cimg = image.NewRGBA(canvas().Bounds())
 var rateLimits = make(map[string]*rate.Limiter)
 
 type settings struct {
+	Frbool bool   `json:"frames"`
 	Update int    `json:"update_duration_seconds"`
 	Port   int    `json:"port"`
 	Addr   string `json:"address"`
@@ -50,7 +51,10 @@ func main() {
 	draw.Draw(cimg, img.Bounds(), img, image.Point{}, draw.Over)
 	fmt.Print("Image has been created! \n")
 
-	go frames(set.Update)
+	if set.Frbool {
+		go frames(set.Update)
+	}
+
 	fmt.Print("Frames system is up! \n")
 
 	var user, action string
