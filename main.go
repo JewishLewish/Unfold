@@ -34,11 +34,17 @@ type settings struct {
 }
 
 func main() {
+	_, err := os.Stat("settings.json")
+	if os.IsNotExist(err) {
+		fmt.Print("settings.json was not founded. Creating file...")
+		setup()
+	}
+
 	file, _ := os.Open("settings.json")
 	defer file.Close()
 
 	var set settings
-	err := json.NewDecoder(file).Decode(&set)
+	err = json.NewDecoder(file).Decode(&set)
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -277,4 +283,32 @@ func merge() image.Image {
 	draw.Draw(newImg, bounds, origimg, image.Point{0, 0}, draw.Over)
 	draw.Draw(newImg, bounds, cimg, image.Point{0, 0}, draw.Over)
 	return newImg
+}
+
+// setup
+func setup() {
+	fmt.Print("Creating Default Settings.json...")
+	defaultset := settings{
+		Frbool: true,
+		Update: 60,
+		Port:   8080,
+		Addr:   "0.0.0.0",
+		Rlim:   30,
+		SFil:   "none",
+	}
+	data, err := json.Marshal(defaultset)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	outFile, _ := os.Create("settings.json")
+
+	_, err = outFile.Write(data)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	outFile.Close()
+	fmt.Print("Settings.json is made!")
 }
