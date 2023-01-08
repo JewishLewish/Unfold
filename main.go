@@ -163,12 +163,14 @@ func web(port int, addr string, ratelim int) {
 			clientIP := strings.Split(r.RemoteAddr, ":")[0]
 
 			// Check if we have a rate limiter for the client IP, create one if not
+			if rateLimits[clientIP] == nil {
+				print(clientIP)
+				rateLimits[clientIP] = rate.NewLimiter(rate.Limit(ratelim), ratelim) //Ratelimits ratelim (default: 180) pixels per second per user of request.
+			}
+
 			if !rateLimits[clientIP].Allow() {
 				http.Error(w, "Too many requests", http.StatusTooManyRequests)
 				return
-			} else if rateLimits[clientIP] == nil {
-				print(clientIP)
-				rateLimits[clientIP] = rate.NewLimiter(rate.Limit(ratelim), ratelim) //Ratelimits ratelim (default: 180) pixels per second per user of request.
 			}
 
 			var uin Payload
