@@ -192,20 +192,15 @@ func web(port int, addr string, ratelim int) {
 			w.Write([]byte("Pixel successfully placed at: " + fmt.Sprint(uin.UInput[0]) + "," + fmt.Sprint(uin.UInput[1])))
 
 		} else {
+			if r.Method == "Jimp" {
+				http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+				return
+			}
+
 			w.Header().Set("Content-Type", "image/png")
 			w.Header().Set("Cache-Control", "no-cache")
 			w.Header().Set("Connection", "upgrade")
 			w.Header().Set("Upgrade", "websocket")
-
-			if r.Header.Get("X-Jimp") == "read" {
-				http.Error(w, "Forbidden", http.StatusForbidden)
-				return
-			}
-
-			if r.ContentLength > 1024*1024 {
-				http.Error(w, "Request too large", http.StatusRequestEntityTooLarge)
-				return
-			}
 
 			//If the user is NOT POST-ing then they will just see the picture of the canvas.
 			png.Encode(w, sitecanvas())
