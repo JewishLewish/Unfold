@@ -219,9 +219,13 @@ func rectangle(lX, lY, lX2, lY2 int) {
 // Canvas Updating - Constantly operating
 
 func frames(delay int) {
+	os.Mkdir("timelapse", 0)
+	var i int = 0
+
 	for {
 		time.Sleep(time.Duration(delay) * time.Second)
-		go update(cimg)
+		i += 1
+		update(cimg, i)
 	}
 }
 
@@ -238,7 +242,7 @@ func canvas() image.Image {
 	return img
 }
 
-func update(upimg *image.RGBA) {
+func update(upimg *image.RGBA, i int) {
 
 	e := os.Remove("main.png")
 	if e != nil {
@@ -248,6 +252,10 @@ func update(upimg *image.RGBA) {
 	outFile, _ := os.Create("main.png")
 	png.Encode(outFile, upimg)
 	outFile.Close()
+
+	file, _ := os.Create(fmt.Sprintf("timelapse/frame%d.png", i))
+	png.Encode(file, upimg)
+	file.Close()
 }
 
 func sitecanvas() image.Image {
