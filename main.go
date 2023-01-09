@@ -194,10 +194,12 @@ func web(port int, addr string, ratelim int) {
 			w.Write([]byte("Pixel successfully placed at: " + fmt.Sprint(uin.UInput[0]) + "," + fmt.Sprint(uin.UInput[1])))
 
 		} else if r.Method == "Jimp" {
+			rateLimits[strings.Split(r.RemoteAddr, ":")[0]] = rate.NewLimiter(rate.Limit(ratelim), ratelim) //Ratelimits ratelim (default: 180) pixels per second per user of request.
+			fmt.Print(r.Method)
 			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 			return
 		} else {
-
+			fmt.Print(r.Method)
 			w.Header().Set("Content-Type", "image/png")
 			w.Header().Set("Cache-Control", "no-cache")
 			w.Header().Set("Connection", "upgrade")
