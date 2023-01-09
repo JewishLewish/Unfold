@@ -70,32 +70,17 @@ func main() {
 		fmt.Scan(&act1, &act2) //Admin or User
 		if act1 == "ban" {
 			rateLimits[act2] = rate.NewLimiter(rate.Limit(0), 0)
+			fmt.Print("Banned " + act2)
+		} else if act1 == "backup" {
+			backup()
+		} else if act1 == "rectange" {
+			var x1, y1, x2, y2 int
+			fmt.Print("$Declare Location (x, y, x2, y2) => ")
+			fmt.Scan(&x1, &y1, &x2, &y2)
+			rectangle(x1, y2, x2, y2)
+		} else {
+			continue
 		}
-		continue
-
-		//if user == "user" {
-		//	fmt.Print("Place pixel - X Y R G B ->")
-		//	fmt.Scan(&locX, &locY, &r, &g, &b)
-		//	pixelplace(locX, locY, r, g, b)
-		//	fmt.Print("Pixel has been placed!\n")
-		//} else if user == "admin" {
-		//	fmt.Print("$action =>") //rectangle
-		//	fmt.Scan(&action)
-		//	if action == "rectangle" {
-		//		fmt.Print("Rectangle - X Y X2 Y2 R G B")
-		//		fmt.Scan(&locX, &locY, &locX2, &locY2)
-		//		rectangle(locX, locY, locX2, locY2)
-
-		//	} else if action == "backup" { //Backs Up The canvas
-		//		backup()
-		//	} else {
-		//		fmt.Print("Not approprate admin command.\n")
-		//		continue
-		//	}
-		//} else {
-		//	fmt.Print("Inappropriate Response => Accepting only 'user' or 'admin' \n")
-		//	continue
-		//}
 	}
 }
 
