@@ -223,7 +223,9 @@ func frames(delay int) {
 	for {
 		time.Sleep(time.Duration(delay) * time.Second)
 		i += 1
-		update(cimg, i)
+		file, _ := os.Create(fmt.Sprintf("timelapse/frame%d.png", i))
+		png.Encode(file, cimg)
+		file.Close()
 	}
 }
 
@@ -238,22 +240,6 @@ func canvas() image.Image {
 	outFile.Close()
 
 	return img
-}
-
-func update(upimg *image.RGBA, i int) {
-
-	e := os.Remove("main.png")
-	if e != nil {
-		log.Fatal(e)
-	}
-
-	outFile, _ := os.Create("main.png")
-	png.Encode(outFile, upimg)
-	outFile.Close()
-
-	file, _ := os.Create(fmt.Sprintf("timelapse/frame%d.png", i))
-	png.Encode(file, upimg)
-	file.Close()
 }
 
 func sitecanvas() image.Image {
