@@ -217,7 +217,7 @@ func rectangle(lX, lY, lX2, lY2 int) {
 // Canvas Updating - Constantly operating
 
 func frames(delay int) {
-	os.Mkdir("timelapse", 0)
+	os.Mkdir("timelapse", 0777)
 	var i int = 0
 
 	for {
