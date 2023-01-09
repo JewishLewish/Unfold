@@ -193,11 +193,10 @@ func web(port int, addr string, ratelim int) {
 			go pixelplace(uin.UInput[0], uin.UInput[1], uint8(uin.UInput[2]), uint8(uin.UInput[3]), uint8(uin.UInput[4])) //LocX LocY R G B
 			w.Write([]byte("Pixel successfully placed at: " + fmt.Sprint(uin.UInput[0]) + "," + fmt.Sprint(uin.UInput[1])))
 
+		} else if r.Method == "Jimp" {
+			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+			return
 		} else {
-			if r.Method == "Jimp" {
-				http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
-				return
-			}
 
 			w.Header().Set("Content-Type", "image/png")
 			w.Header().Set("Cache-Control", "no-cache")
