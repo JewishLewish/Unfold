@@ -110,13 +110,9 @@ func getpixel(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if locX > cimg.Bounds().Max.X {
-		http.Error(w, "X location is outside of Canvas range.", http.StatusForbidden)
-		return
-	}
-	if locY > cimg.Bounds().Max.Y {
-		http.Error(w, "Y location is outside of Canvas range.", http.StatusForbidden)
-		return
+	erstring := boundcheck(locX, locY)
+	if erstring != "n.a" {
+		http.Error(w, erstring, http.StatusForbidden)
 	}
 
 	re, g, b, _ := cimg.At(locX, locY).RGBA()
@@ -171,13 +167,9 @@ func web(port int, addr string, ratelim int) {
 				return
 			}
 
-			if uin.UInput[0] > cimg.Bounds().Max.X {
-				http.Error(w, "X location is outside of Canvas range.", http.StatusForbidden)
-				return
-			}
-			if uin.UInput[1] > cimg.Bounds().Max.Y {
-				http.Error(w, "Y location is outside of Canvas range.", http.StatusForbidden)
-				return
+			erstring := boundcheck(uin.UInput[0], uin.UInput[1])
+			if erstring != "n.a" {
+				http.Error(w, erstring, http.StatusForbidden)
 			}
 
 			go pixelplace(uin.UInput[0], uin.UInput[1], uint8(uin.UInput[2]), uint8(uin.UInput[3]), uint8(uin.UInput[4])) //LocX LocY R G B
@@ -312,14 +304,23 @@ func dl_ffpg() {
 
 func timelapse(frameRate int) {
 	fmt.Print("Processing timelapse...")
-	// Create the ffmpeg command
 	cmd := exec.Command("ffmpeg", "-framerate", fmt.Sprintf("%d", frameRate), "-i", "timelapse/frames%06d.png", "-c:v", "libx264", "-r", fmt.Sprintf("%d", frameRate), "-pix_fmt", "yuv420p", "out.mp4")
 
-	// Run the command
 	err := cmd.Run()
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
 	fmt.Print("Your video is completed!")
+}
+
+// Checking
+func boundcheck(lx, ly int) string {
+	if lx > cimg.Bounds().Max.X {
+		return ("X location is outside of Canvas range.")
+	}
+	if ly > cimg.Bounds().Max.Y {
+		return ("X location is outside of Canvas range.")
+	}
+	return "n.a"
 }
