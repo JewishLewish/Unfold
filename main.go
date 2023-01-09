@@ -10,6 +10,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"os/exec"
 	"strconv"
 	"strings"
 	"time"
@@ -26,6 +27,7 @@ var rateLimits = make(map[string]*rate.Limiter)
 
 type settings struct {
 	Frbool bool   `json:"frames"`
+	Fps    int    `json:"framerate"`
 	Update int    `json:"update_duration_seconds"`
 	Port   int    `json:"port"`
 	Addr   string `json:"address"`
@@ -77,6 +79,10 @@ func main() {
 			fmt.Print("$Declare Location (x, y, x2, y2) => ")
 			fmt.Scan(&x1, &y1, &x2, &y2)
 			rectangle(x1, y2, x2, y2)
+		} else if act1 == "setup_frames" {
+			dl_ffpg()
+		} else if act1 == "timelapse" {
+			timelapse(set.Fps)
 		} else {
 			continue
 		}
@@ -289,4 +295,31 @@ func setup() {
 	}
 	outFile.Close()
 	fmt.Print("Settings.json is made!")
+}
+
+//Timelapse
+
+func dl_ffpg() {
+	fmt.Print("Cloning ffmpeg. Give it a moment or two...")
+	cmd := exec.Command("git", "clone", "https://git.ffm")
+	err := cmd.Run()
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	fmt.Print("ffmpeg is successfully installed!")
+}
+
+func timelapse(frameRate int) {
+	fmt.Print("Processing timelapse...")
+	// Create the ffmpeg command
+	cmd := exec.Command("ffmpeg", "-framerate", fmt.Sprintf("%d", frameRate), "-i", "timelapse/frames%06d.png", "-c:v", "libx264", "-r", fmt.Sprintf("%d", frameRate), "-pix_fmt", "yuv420p", "out.mp4")
+
+	// Run the command
+	err := cmd.Run()
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	fmt.Print("Your video is completed!")
 }
