@@ -218,12 +218,12 @@ func rectangle(lX, lY, lX2, lY2 int) {
 
 func frames(delay int) {
 	os.Mkdir("timelapse", 0777)
-	var i int = 0
+	var i int = 0000
 
 	for {
 		time.Sleep(time.Duration(delay) * time.Second)
 		i += 1
-		file, _ := os.Create(fmt.Sprintf("timelapse/frame%d.png", i))
+		file, _ := os.Create(fmt.Sprintf("timelapse/frame%04d.png", i))
 		png.Encode(file, cimg)
 		file.Close()
 	}
