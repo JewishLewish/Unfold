@@ -229,7 +229,7 @@ func frames(delay int) {
 	for {
 		time.Sleep(time.Duration(delay) * time.Second)
 		i += 1
-		file, _ := os.Create(fmt.Sprintf("timelapse/frame%04d.png", i))
+		file, _ := os.Create(fmt.Sprintf("timelapse/frame%06d.png", i))
 		png.Encode(file, cimg)
 		file.Close()
 	}
