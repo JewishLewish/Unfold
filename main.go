@@ -160,20 +160,20 @@ func web(port int, addr string, ratelim int) {
 	mux.HandleFunc("/", homepage)
 	mux.HandleFunc("/pixel", getpixel)
 	mux.HandleFunc("/canvas", func(w http.ResponseWriter, r *http.Request) {
+
+		clientIP := strings.Split(r.RemoteAddr, ":")[0]
+		if rateLimits[clientIP] == nil {
+			print(clientIP)
+			rateLimits[clientIP] = rate.NewLimiter(rate.Limit(ratelim), ratelim) //Ratelimits ratelim (default: 180) pixels per second per user of request.
+		}
+
+		if !rateLimits[clientIP].Allow() {
+			http.Error(w, "Too many requests", http.StatusTooManyRequests)
+			return
+		}
+
 		if r.Method == http.MethodPost {
 			r.Header.Set("Content-Type", "application/json")
-			clientIP := strings.Split(r.RemoteAddr, ":")[0]
-
-			// Check if we have a rate limiter for the client IP, create one if not
-			if rateLimits[clientIP] == nil {
-				print(clientIP)
-				rateLimits[clientIP] = rate.NewLimiter(rate.Limit(ratelim), ratelim) //Ratelimits ratelim (default: 180) pixels per second per user of request.
-			}
-
-			if !rateLimits[clientIP].Allow() {
-				http.Error(w, "Too many requests", http.StatusTooManyRequests)
-				return
-			}
 
 			var uin Payload
 			if err := json.NewDecoder(r.Body).Decode(&uin); err != nil {
@@ -194,12 +194,10 @@ func web(port int, addr string, ratelim int) {
 			w.Write([]byte("Pixel successfully placed at: " + fmt.Sprint(uin.UInput[0]) + "," + fmt.Sprint(uin.UInput[1])))
 
 		} else if r.Method == "Jimp" {
-			rateLimits[strings.Split(r.RemoteAddr, ":")[0]] = rate.NewLimiter(rate.Limit(ratelim), ratelim) //Ratelimits ratelim (default: 180) pixels per second per user of request.
 			fmt.Print(r.Method)
 			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 			return
 		} else {
-			fmt.Print(r.Method)
 			w.Header().Set("Content-Type", "image/png")
 			w.Header().Set("Cache-Control", "no-cache")
 			w.Header().Set("Connection", "upgrade")
