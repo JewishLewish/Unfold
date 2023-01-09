@@ -58,10 +58,9 @@ func main() {
 	fmt.Print("Image has been created! \n")
 
 	if set.Frbool {
+		fmt.Print("Frames system is up! \n")
 		go frames(set.Update)
 	}
-
-	fmt.Print("Frames system is up! \n")
 
 	var act1, act2 string
 
