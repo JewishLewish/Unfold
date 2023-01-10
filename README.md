@@ -17,7 +17,8 @@
   "port":25567,
   "address":"0.0.0.0",
   "ratelimit":180,
-  "sitefiles": "static/index.html"
+  "sitefiles": "static/index.html",
+  "useplacemap": false
 }
 ```
 
@@ -34,3 +35,18 @@
 ``ratelimit (int)`` -> Ratelimits pixels per second. It's recommended below 20.
 
 ``sitefiles (string, relative path)`` -> This will open the index.html file and use it as it's main site for ``/``
+
+``sitefiles (bool)`` -> 2nd canvas that determines which areas can a user place. 
+
+## Plans
+The following features are still in development:
+
+``
+Mask Feature -> Allows users can place in certain areas of a canvas
+
+Setup Tools -> Allows users not to manually have to install every file needed
+
+Built-In Terminal -> Allows users to type in certain commands
+
+Admin Panel(?) -> Allows admins / managers to see audit logs of servers
+``
