@@ -13,6 +13,7 @@
 {
   "frames": false,
   "update_duration_seconds":2,
+  "framerate":60,
   "port":25567,
   "address":"0.0.0.0",
   "ratelimit":180,
@@ -23,6 +24,8 @@
 ``frames (false/true)`` -> When true, it will start recording "frames" of the canvas.
 
 ``update_duration_seconds (0-...)`` -> Frames must be true. Duration between each frame saves.
+
+``framerate (1-...)`` -> Framerate for Timelapse 
 
 ``port (int)`` -> Port for your server
 
