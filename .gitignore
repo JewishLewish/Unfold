@@ -1,4 +1,3 @@
-*.png
 *.mod
 *.exe
 unfold
@@ -6,3 +5,5 @@ unfold
 *.py
 *.pypy
 *.jpg
+main.png
+art.png

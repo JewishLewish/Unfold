@@ -33,6 +33,7 @@ type settings struct {
 	Addr   string `json:"address"`
 	Rlim   int    `json:"ratelimit"`
 	SFil   string `json:"sitefiles"`
+	Pmap   bool   `json:"useplacemap"`
 }
 
 func main() {
@@ -56,7 +57,17 @@ func main() {
 	go web(set.Port, set.Addr, set.Rlim) //Website operates async.
 	fmt.Print("Website is being operated!\n")
 
-	draw.Draw(cimg, img.Bounds(), img, image.Point{}, draw.Over)
+	if set.Pmap {
+		fmt.Print("Applying mask...")
+		file2, _ := os.Open("placeable.png")
+		img2, _, _ := image.Decode(file2)
+
+		file2.Close()
+		draw.DrawMask(cimg, origimg.Bounds(), origimg, image.Point{}, img2, image.Point{}, draw.Over)
+	} else {
+		draw.Draw(cimg, img.Bounds(), img, image.Point{}, draw.Over)
+	}
+
 	fmt.Print("Image has been created! \n")
 
 	if set.Frbool {
@@ -83,6 +94,13 @@ func main() {
 			dl_ffpg()
 		} else if act1 == "timelapse" {
 			timelapse(set.Fps)
+		} else if act1 == "place" {
+			var x1, y1 int
+			var r, g, b uint8
+			fmt.Print("$Declare Location (x, y, r, g, b) => ")
+			fmt.Scan(&x1, &y1, &r, &g, &b)
+			pixelplace(x1, y1, uint8(r), uint8(g), uint8(b))
+			continue
 		} else {
 			continue
 		}
@@ -93,6 +111,7 @@ type info struct {
 	R uint8 `json:"R"`
 	G uint8 `json:"G"`
 	B uint8 `json:"B"`
+	T bool  `json:true`
 }
 
 func getpixel(w http.ResponseWriter, r *http.Request) {
@@ -115,10 +134,15 @@ func getpixel(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, erstring, http.StatusForbidden)
 	}
 
-	re, g, b, _ := cimg.At(locX, locY).RGBA()
+	re, g, b, a := cimg.At(locX, locY).RGBA()
 
-	info := info{R: uint8(re), G: uint8(g), B: uint8(b)}
-	json.NewEncoder(w).Encode(info)
+	if a != 255 {
+		info := info{T: false}
+		json.NewEncoder(w).Encode(info)
+	} else {
+		info := info{R: uint8(re), G: uint8(g), B: uint8(b), T: true}
+		json.NewEncoder(w).Encode(info)
+	}
 
 }
 
@@ -216,7 +240,7 @@ func rectangle(lX, lY, lX2, lY2 int) {
 
 func frames(delay int) {
 	os.Mkdir("timelapse", 0777)
-	var i int = 0000
+	var i int = 0
 
 	for {
 		time.Sleep(time.Duration(delay) * time.Second)

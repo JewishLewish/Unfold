@@ -1,9 +1,10 @@
 {
-  "frames": true,
+  "frames": false,
   "update_duration_seconds":2,
   "framerate":60,
   "port":25567,
   "address":"0.0.0.0",
   "ratelimit":180,
-  "sitefiles": "static/index.html"
+  "sitefiles": "static/index.html",
+  "useplacemap": true
 }
