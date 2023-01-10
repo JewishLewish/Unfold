@@ -41,7 +41,6 @@
 ## Plans
 The following features are still in development:
 
-``
 Mask Feature -> Allows users can place in certain areas of a canvas
 
 Setup Tools -> Allows users not to manually have to install every file needed
@@ -49,4 +48,3 @@ Setup Tools -> Allows users not to manually have to install every file needed
 Built-In Terminal -> Allows users to type in certain commands
 
 Admin Panel(?) -> Allows admins / managers to see audit logs of servers
-``
