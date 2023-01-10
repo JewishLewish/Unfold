@@ -111,7 +111,7 @@ type info struct {
 	R uint8 `json:"R"`
 	G uint8 `json:"G"`
 	B uint8 `json:"B"`
-	T bool  `json:"T"`
+	T bool  `json:"placeable"`
 }
 
 func getpixel(w http.ResponseWriter, r *http.Request) {
