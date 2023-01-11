@@ -60,27 +60,8 @@ func main() {
 	draw.Draw(cimg, img.Bounds(), img, image.Point{}, draw.Over)
 
 	if set.Pmap {
-		fmt.Print("Applying mask... \n")
-		file2, _ := os.Open("placeable.png")
-
-		Pmapc, _, _ := image.Decode(file2)
-		file2.Close()
-
-		b := Pmapc.Bounds()
-		transparentImg := image.NewRGBA(Pmapc.Bounds())
-
-		//draw.Draw(cimg, img.Bounds(), img, image.Point{}, draw.Over)
-		draw.Draw(transparentImg, b, Pmapc, image.Point{}, draw.Over)
-		for y := 0; y < b.Max.Y; y++ {
-			for x := 0; x < b.Max.X; x++ {
-				r, g, b, _ := transparentImg.At(x, y).RGBA()
-				if r == 0xffff && g == 0xffff && b == 0xffff {
-					cimg.Set(x, y, color.Transparent)
-				}
-			}
-		}
+		mask()
 	}
-
 	fmt.Print("Image has been created! \n")
 
 	if set.Frbool {
@@ -354,6 +335,29 @@ func timelapse(frameRate int) {
 	fmt.Print("Your video is completed!")
 }
 
+// Mask System
+func mask() {
+	fmt.Print("Applying mask... \n")
+	file2, _ := os.Open("placeable.png")
+
+	Pmapc, _, _ := image.Decode(file2)
+	file2.Close()
+
+	b := Pmapc.Bounds()
+	transparentImg := image.NewRGBA(Pmapc.Bounds())
+
+	//draw.Draw(cimg, img.Bounds(), img, image.Point{}, draw.Over)
+	draw.Draw(transparentImg, b, Pmapc, image.Point{}, draw.Over)
+	for y := 0; y < b.Max.Y; y++ {
+		for x := 0; x < b.Max.X; x++ {
+			r, g, b, _ := transparentImg.At(x, y).RGBA()
+			if r == 0xffff && g == 0xffff && b == 0xffff {
+				cimg.Set(x, y, color.Transparent)
+			}
+		}
+	}
+}
+
 // Checking
 func boundcheck(lx, ly int) string {
 	if lx > cimg.Bounds().Max.X {
@@ -363,4 +367,5 @@ func boundcheck(lx, ly int) string {
 		return ("X location is outside of Canvas range.")
 	}
 	return "n.a"
+
 }
