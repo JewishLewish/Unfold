@@ -6,5 +6,5 @@
   "address":"0.0.0.0",
   "ratelimit":180,
   "sitefiles": "static/index.html",
-  "useplacemap": false
+  "useplacemap": true
 }
