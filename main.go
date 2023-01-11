@@ -58,29 +58,6 @@ func main() {
 	fmt.Print("Website is being operated!\n")
 
 	draw.Draw(cimg, img.Bounds(), img, image.Point{}, draw.Over)
-	if set.Pmap {
-		fmt.Print("Applying mask... \n")
-		file2, err := os.Open("placeable.png")
-		if err != nil {
-			fmt.Print(err)
-		}
-
-		Pmapc, _, _ := image.Decode(file2)
-		file2.Close()
-
-		b := Pmapc.Bounds()
-		transparentImg := image.NewRGBA(b)
-		draw.Draw(transparentImg, b, Pmapc, image.Point{}, draw.Src)
-		for y := 0; y < b.Max.Y; y++ {
-			for x := 0; x < b.Max.X; x++ {
-				_, _, _, a := transparentImg.At(x, y).RGBA()
-				if a == 0xffff {
-					transparentImg.Set(x, y, color.Transparent)
-				}
-			}
-		}
-		draw.Draw(cimg, b, transparentImg, image.Point{}, draw.Over)
-	}
 
 	fmt.Print("Image has been created! \n")
 
@@ -153,7 +130,7 @@ func getpixel(w http.ResponseWriter, r *http.Request) {
 
 	re, g, b, a := cimg.At(locX, locY).RGBA()
 
-	if a != 255 {
+	if a == 0 {
 		info := info{T: false}
 		json.NewEncoder(w).Encode(info)
 	} else {
