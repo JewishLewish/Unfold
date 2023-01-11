@@ -81,3 +81,12 @@ ex. (left is "canvas.png" and right is "placeable.png")
 ![placeable](https://user-images.githubusercontent.com/65754609/211696355-de09a2c9-9918-48a0-89c1-acb663f90180.png)
 
  6. Have fun.
+ 
+ ### Timelapse System
+ 
+
+https://user-images.githubusercontent.com/65754609/211737795-b4606719-2aa5-4cce-be7c-b75eb70625c9.mp4
+
+Still in development, use ffmpeg. Command use:
+
+```ffmpeg -framerate 30 -pattern_type glob -i 'timelapse/frame%d.png' -r 120 -vcodec libx264 timelapse.mp4```
