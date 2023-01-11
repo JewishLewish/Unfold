@@ -75,14 +75,18 @@ func main() {
 		go frames(set.Update)
 	}
 
-	var act1, act2 string
+	var act1 string
 
 	for {
 		fmt.Print("$terminal =>")
-		fmt.Scan(&act1, &act2) //Admin or User
+		fmt.Scan(&act1) //Admin or User
+
 		if act1 == "ban" {
-			rateLimits[act2] = rate.NewLimiter(rate.Limit(0), 0)
-			fmt.Print("Banned " + act2)
+			var ip string
+			fmt.Print("IP to ban: ")
+			fmt.Scan(&ip)
+			rateLimits[ip] = rate.NewLimiter(rate.Limit(0), 0)
+			fmt.Print("Banned " + ip)
 		} else if act1 == "backup" {
 			backup()
 		} else if act1 == "rectange" {
