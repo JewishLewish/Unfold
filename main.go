@@ -238,10 +238,11 @@ func rectangle(lX, lY, lX2, lY2 int) {
 func frames(delay int) {
 	os.Mkdir("timelapse", 0777)
 	var i int
+	sleep := time.Duration(delay) * time.Second
 
 	for {
-		time.Sleep(time.Duration(delay) * time.Second)
-		i += 1
+		time.Sleep(sleep)
+		i++
 		file, _ := os.Create(fmt.Sprintf("timelapse/frame%06d.png", i))
 		png.Encode(file, cimg)
 		file.Close()
@@ -262,10 +263,12 @@ func sitecanvas() image.Image {
 }
 
 func backup() {
-	fmt.Print("Backing up main.png...\n")
+	fmt.Print("Backing up canvas...\n")
+
 	outFile, _ := os.Create("backup.png")
 	png.Encode(outFile, merge())
 	outFile.Close()
+
 	fmt.Print("Backup is complete. backup.png is made!\n")
 }
 
