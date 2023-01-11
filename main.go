@@ -69,6 +69,8 @@ func main() {
 		go frames(set.Update)
 	}
 
+	defer turnoff() //When the code ends, we can shut it off.
+
 	var act1 string
 
 	for {
@@ -366,4 +368,12 @@ func boundcheck(lx, ly int) string {
 	}
 	return "n.a"
 
+}
+
+// Server Shutdown -> This would save the file and the last state of the image.
+func turnoff() {
+	fmt.Print("Shutting down...")
+	file, _ := os.Create("canvas.png")
+	png.Encode(file, cimg)
+	file.Close()
 }
