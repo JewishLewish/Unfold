@@ -57,15 +57,24 @@ func main() {
 	go web(set.Port, set.Addr, set.Rlim) //Website operates async.
 	fmt.Print("Website is being operated!\n")
 
+	draw.Draw(cimg, img.Bounds(), img, image.Point{}, draw.Over)
 	if set.Pmap {
-		fmt.Print("Applying mask...")
 		file2, _ := os.Open("placeable.png")
-		img2, _, _ := image.Decode(file2)
-
+		Pmapc, _, _ := image.Decode(file2)
 		file2.Close()
-		draw.DrawMask(cimg, origimg.Bounds(), origimg, image.Point{}, img2, image.Point{}, draw.Over)
-	} else {
-		draw.Draw(cimg, img.Bounds(), img, image.Point{}, draw.Over)
+
+		b := Pmapc.Bounds()
+		transparentImg := image.NewRGBA(b)
+		draw.Draw(transparentImg, b, Pmapc, image.Point{}, draw.Src)
+		for y := 0; y < b.Max.Y; y++ {
+			for x := 0; x < b.Max.X; x++ {
+				_, _, _, a := transparentImg.At(x, y).RGBA()
+				if a == 0xffff {
+					transparentImg.Set(x, y, color.Transparent)
+				}
+			}
+		}
+		draw.Draw(cimg, b, transparentImg, image.Point{}, draw.Over)
 	}
 
 	fmt.Print("Image has been created! \n")
@@ -104,7 +113,6 @@ func main() {
 			fmt.Print("$Declare Location (x, y, r, g, b) => ")
 			fmt.Scan(&x1, &y1, &r, &g, &b)
 			pixelplace(x1, y1, uint8(r), uint8(g), uint8(b))
-			continue
 		} else {
 			continue
 		}
