@@ -83,13 +83,13 @@ func main() {
 			fmt.Print("Banned " + ip)
 		} else if act1 == "backup" {
 			backup()
-		} else if act1 == "rectange" {
+		} else if act1 == "rectangle" {
 			var x1, y1, x2, y2 int
 			fmt.Print("$Declare Location (x, y, x2, y2) => ")
 			fmt.Scan(&x1, &y1, &x2, &y2)
 			rectangle(x1, y2, x2, y2)
 		} else if act1 == "setup_frames" {
-			dl_ffpg()
+			dlffpg()
 		} else if act1 == "timelapse" {
 			timelapse(set.Fps)
 		} else if act1 == "place" {
@@ -149,9 +149,7 @@ func homepage(w http.ResponseWriter, r *http.Request) {
 
 	var set settings
 	json.NewDecoder(file).Decode(&set)
-	if set.SFil == "none" {
-		return
-	} else {
+	if set.SFil != "none" {
 		http.ServeFile(w, r, set.SFil)
 	}
 }
@@ -237,7 +235,7 @@ func rectangle(lX, lY, lX2, lY2 int) {
 
 func frames(delay int) {
 	os.Mkdir("timelapse", 0777)
-	var i int = 0
+	var i int
 
 	for {
 		time.Sleep(time.Duration(delay) * time.Second)
@@ -312,7 +310,7 @@ func setup() {
 
 //Timelapse
 
-func dl_ffpg() {
+func dlffpg() {
 	fmt.Print("Cloning ffmpeg. Give it a moment or two...")
 	cmd := exec.Command("git", "clone", "https://git.ffm")
 	err := cmd.Run()
