@@ -59,7 +59,12 @@ func main() {
 
 	draw.Draw(cimg, img.Bounds(), img, image.Point{}, draw.Over)
 	if set.Pmap {
-		file2, _ := os.Open("placeable.png")
+		fmt.Print("Applying mask... \n")
+		file2, err := os.Open("placeable.png")
+		if err != nil {
+			fmt.Print(err)
+		}
+
 		Pmapc, _, _ := image.Decode(file2)
 		file2.Close()
 
