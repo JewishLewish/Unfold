@@ -252,12 +252,7 @@ func frames(delay int) {
 func canvas() image.Image {
 	canvas, _ := os.Open("canvas.png") //canvas = Main folder.
 	img, _ := png.Decode(canvas)
-	canvas.Close()
-
-	outFile, _ := os.Create("main.png")
-	png.Encode(outFile, img)
-	outFile.Close()
-
+	defer canvas.Close()
 	return img
 }
 
