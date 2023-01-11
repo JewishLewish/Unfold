@@ -22,31 +22,6 @@
 }
 ```
 
-``frames (false/true)`` -> When true, it will start recording "frames" of the canvas.
-
-``update_duration_seconds (0-...)`` -> Frames must be true. Duration between each frame saves.
-
-``framerate (1-...)`` -> Framerate for Timelapse 
-
-``port (int)`` -> Port for your server
-
-``address (string)`` -> Address for your server (0.0.0.0 for default)
-
-``ratelimit (int)`` -> Ratelimits pixels per second. It's recommended below 20.
-
-``sitefiles (string, relative path)`` -> This will open the index.html file and use it as it's main site for ``/``
-
-``sitefiles (bool)`` -> 2nd canvas that determines which areas can a user place. 
-
-## Plans
-The following features are still in development:
-
-Setup Tools -> Allows users not to manually have to install every file needed
-
-Built-In Terminal -> Allows users to type in certain commands
-
-Admin Panel(?) -> Allows admins / managers to see audit logs of servers
-
 ## Setup
 
 ### Requirements
