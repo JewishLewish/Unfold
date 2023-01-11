@@ -1,12 +1,12 @@
 # Unfold
 ![Unfold](https://user-images.githubusercontent.com/65754609/211249822-1a11e1cc-da8a-4566-9220-d299a98578c3.png)
 
-## Sites
-``/canvas`` -> Directs you to the canvas of the project
+## Websocket Subdirectories
+![Frame 2](https://user-images.githubusercontent.com/65754609/211909555-5fa4b496-7ce1-4297-851b-9deb02216e4f.png)
 
-``/pixel?x=0&y=0`` -> Gives JSON information about certain canvas locations
 
-``/`` -> Main Page. You can setup your own custom page via settings.json. 
+## HTTP Methods
+![Frame 3 (1)](https://user-images.githubusercontent.com/65754609/211909724-7252ad03-347e-429e-9a5b-972da513b19f.png)
 
 ## Settings.json
 ```json
