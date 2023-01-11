@@ -286,12 +286,14 @@ func merge() image.Image {
 func setup() {
 	fmt.Print("Creating Default Settings.json...")
 	defaultset := settings{
-		Frbool: true,
+		Frbool: false,
+		Fps:    15,
 		Update: 60,
 		Port:   8080,
 		Addr:   "0.0.0.0",
 		Rlim:   30,
 		SFil:   "none",
+		Pmap:   false,
 	}
 	data, err := json.Marshal(defaultset)
 	if err != nil {
