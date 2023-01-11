@@ -49,6 +49,14 @@ Admin Panel(?) -> Allows admins / managers to see audit logs of servers
 
 ## Setup
 
+### Requirements
+
+* Download Go Lang (1.19 preferred)
+
+* Git Clone ffmpeg (optional for timelapse) 
+
+### Instructions
+
 1) Download Go Lang (1.19 preferred) 
 
 2) Git clone this github repo 
