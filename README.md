@@ -1,12 +1,12 @@
 # Unfold
 ![Unfold](https://user-images.githubusercontent.com/65754609/211249822-1a11e1cc-da8a-4566-9220-d299a98578c3.png)
 
-## Sites
-``/canvas`` -> Directs you to the canvas of the project
+## Websocket Subdirectories
+![Frame 2](https://user-images.githubusercontent.com/65754609/211909555-5fa4b496-7ce1-4297-851b-9deb02216e4f.png)
 
-``/pixel?x=0&y=0`` -> Gives JSON information about certain canvas locations
 
-``/`` -> Main Page. You can setup your own custom page via settings.json. 
+## HTTP Methods
+![Frame 3 (1)](https://user-images.githubusercontent.com/65754609/211909724-7252ad03-347e-429e-9a5b-972da513b19f.png)
 
 ## Settings.json
 ```json
@@ -81,3 +81,12 @@ ex. (left is "canvas.png" and right is "placeable.png")
 ![placeable](https://user-images.githubusercontent.com/65754609/211696355-de09a2c9-9918-48a0-89c1-acb663f90180.png)
 
  6. Have fun.
+ 
+ ### Timelapse System
+ 
+
+https://user-images.githubusercontent.com/65754609/211737795-b4606719-2aa5-4cce-be7c-b75eb70625c9.mp4
+
+Still in development, use ffmpeg. Command use:
+
+```ffmpeg -framerate 30 -pattern_type glob -i 'timelapse/frame%d.png' -r 120 -vcodec libx264 timelapse.mp4```
