@@ -41,10 +41,35 @@
 ## Plans
 The following features are still in development:
 
-Mask Feature -> Allows users can place in certain areas of a canvas
-
 Setup Tools -> Allows users not to manually have to install every file needed
 
 Built-In Terminal -> Allows users to type in certain commands
 
 Admin Panel(?) -> Allows admins / managers to see audit logs of servers
+
+## Setup
+
+1) Download Go Lang (1.19 preferred) 
+
+2) Git clone this github repo 
+
+3) From there use Git Bash and direct to your directory.
+  
+    -> use `` go build `` to build the GO code to your device's OS and CPU Archectecture 
+
+    -> for different operating systems / CPU archiecture then look at Go's Cross Compiling System
+  
+4) Place the code into your server. Run it once and the settings.json file will be created.
+
+5) You just need one png image (default). Put down a `` canvas.png `` and the code will use it as the main canvas.
+
+  **SIDENOTE**, if you are using a "placing map" then make a Black-and-White Pixel Only Canvas call it "placeable.png." 
+  
+      White Pixel = User cannot place. Black Pixel = User Can Place
+
+ex. (left is "canvas.png" and right is "placeable.png")
+
+![canvas](https://user-images.githubusercontent.com/65754609/211696350-cb089955-7aeb-4db8-b2b0-09992349309d.png)
+![placeable](https://user-images.githubusercontent.com/65754609/211696355-de09a2c9-9918-48a0-89c1-acb663f90180.png)
+
+ 6. Have fun.
