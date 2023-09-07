@@ -307,9 +307,7 @@ func setup() {
 
 func dlffpg() {
 	fmt.Print("Cloning ffmpeg. Give it a moment or two...")
-	cmd := exec.Command("git", "clone", "https://git.ffm")
-	err := cmd.Run()
-	if err != nil {
+	if err := exec.Command("git", "clone", "https://git.ffm").Run(); err != nil {
 		fmt.Println(err)
 		return
 	}
