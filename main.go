@@ -184,8 +184,7 @@ func web(port int, addr string, ratelim int) {
 				return
 			}
 
-			erstring := boundcheck(uin.UInput[0], uin.UInput[1])
-			if erstring != "n.a" {
+			if erstring := boundcheck(uin.UInput[0], uin.UInput[1]); erstring != "n.a" {
 				http.Error(w, erstring, http.StatusForbidden)
 			}
 
@@ -193,7 +192,6 @@ func web(port int, addr string, ratelim int) {
 			w.Write([]byte("Pixel successfully placed at: " + fmt.Sprint(uin.UInput[0]) + "," + fmt.Sprint(uin.UInput[1])))
 
 		} else if r.Method == "Jimp" {
-			fmt.Print(r.Method)
 			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 			return
 		} else {
