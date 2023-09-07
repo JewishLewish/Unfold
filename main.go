@@ -47,8 +47,7 @@ func main() {
 	defer file.Close()
 
 	var set settings
-	err = json.NewDecoder(file).Decode(&set)
-	if err != nil {
+	if json.NewDecoder(file).Decode(&set) != nil {
 		fmt.Println(err)
 		return
 	}
@@ -128,19 +127,16 @@ func getpixel(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	erstring := boundcheck(locX, locY)
-	if erstring != "n.a" {
+	if erstring := boundcheck(locX, locY); erstring != "n.a" {
 		http.Error(w, erstring, http.StatusForbidden)
 	}
 
 	re, g, b, a := cimg.At(locX, locY).RGBA()
 
 	if a == 0 {
-		info := info{T: false}
-		json.NewEncoder(w).Encode(info)
+		json.NewEncoder(w).Encode(info{T: false})
 	} else {
-		info := info{R: uint8(re), G: uint8(g), B: uint8(b), T: true}
-		json.NewEncoder(w).Encode(info)
+		json.NewEncoder(w).Encode(info{R: uint8(re), G: uint8(g), B: uint8(b), T: true})
 	}
 
 }
@@ -228,8 +224,7 @@ func pixelplace(locX int, locY int, R, G, B uint8) {
 // Admin Pixel Placing
 func rectangle(lX, lY, lX2, lY2 int) {
 	fmt.Print("Drawing White Recetangle... \n")
-	rect := image.Rect(lX, lY, lX2, lY2)
-	draw.Draw(cimg, rect, &image.Uniform{color.White}, image.Point{lX, lX2}, draw.Over)
+	draw.Draw(cimg, image.Rect(lX, lY, lX2, lY2), &image.Uniform{color.White}, image.Point{lX, lX2}, draw.Over)
 	fmt.Print("Rectangle completed! \n")
 }
 
